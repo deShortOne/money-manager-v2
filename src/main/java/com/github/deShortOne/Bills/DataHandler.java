@@ -31,4 +31,25 @@ public class DataHandler {
 		}
 		return output;
 	}
+
+	public static boolean updateBill(BillInfo updatedBill) {
+		String updateBill = new StringBuilder().append("UPDATE bills ")
+			.append("SET PayerAccount = (SELECT ID FROM accounts WHERE AccountName = '%s'), ")
+			.append("PayeeAccount = (SELECT ID FROM accounts WHERE AccountName = '%s'), ")
+			.append("Amount = %f ")
+			.append("WHERE ID = %d")
+			.toString();
+
+		boolean isSuccess;
+		try {
+			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerName(), updatedBill.getPayeeName(),
+					updatedBill.getAmount(), updatedBill.getID()));
+			isSuccess = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			isSuccess = false;
+		}
+
+		return isSuccess;
+	}
 }
