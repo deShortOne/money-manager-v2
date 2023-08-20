@@ -1,13 +1,11 @@
 package com.github.deShortOne.Recurrence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.MonthDay;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -18,7 +16,7 @@ import org.junit.jupiter.api.Test;
 public class WeeklyTest {
 	private Random random = new Random();
 
-	private Reccurence rec;
+	private Recurrence rec;
 	private LocalDate currDate = LocalDate.of(2023, 1, 15);
 	private DayOfWeek dayOfWeek;
 	private LocalDate nextDate;
@@ -43,7 +41,7 @@ public class WeeklyTest {
 		this.dayOfWeek = DayOfWeek.of(randomDayOfWeekInt + 1);
 		this.nextDate = testCases.get(dayOfWeek);
 
-		rec = new Reccurence(this.dayOfWeek);
+		rec = new Recurrence(FrequencyType.WEEKLY, this.dayOfWeek, null, null, null);
 	}
 
 	@Test
@@ -90,8 +88,6 @@ public class WeeklyTest {
 
 	@Test
 	public void useCurrDate() {
-		assertEquals(rec.getNextDate(), null);
-
 		rec.setCurrDate(currDate);
 		assertEquals(rec.getNextDate(), nextDate);
 
@@ -115,40 +111,33 @@ public class WeeklyTest {
 
 	@Test
 	public void invalidUse() {
-		assertTrue(rec.isValid());
-
-		Reccurence badWeekly = new Reccurence(Frequency.WEEKLY);
-		assertFalse(badWeekly.isValid());
-		assertThrows(IllegalArgumentException.class, () -> badWeekly.getNextDate(currDate));
-		assertThrows(NullPointerException.class, () -> badWeekly.setCurrDate());
-
-		assertThrows(NullPointerException.class, () -> rec.setWeeklyFrequency(null));
+		assertThrows(NullPointerException.class, () -> rec.setCurrDate());
 	}
-	
+
 	@Test
 	public void everyOtherWeek() {
-		rec.setSkip(1);
+		rec = new Recurrence(FrequencyType.EVERY_OTHER_WEEK, dayOfWeek, null, null, null);
 		rec.setCurrDate(currDate);
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(1));
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(3));
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(5));
 	}
-	
+
 	@Test
 	public void everyFourWeeks() {
-		rec.setSkip(3);
+		rec = new Recurrence(FrequencyType.EVERY_FOUR_WEEKS, dayOfWeek, null, null, null);
 		rec.setCurrDate(currDate);
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(3));
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(7));
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(11));
 	}
-	
+
 	@Test
 	public void stringConversion() {
-		Reccurence r = new Reccurence(FrequencyType.WEEKLY, DayOfWeek.of(1));
+		Recurrence r = new Recurrence(FrequencyType.WEEKLY, DayOfWeek.of(1), null, null, null);
 		String textToDatabase = r.convertToString();
-		
-		Reccurence r2 = new Reccurence(textToDatabase);
+
+		Recurrence r2 = new Recurrence(textToDatabase);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 9)), LocalDate.of(2023, 4, 10));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 17));
 	}

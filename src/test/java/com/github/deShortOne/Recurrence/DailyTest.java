@@ -11,14 +11,14 @@ import org.junit.jupiter.api.Test;
 
 public class DailyTest {
 
-	private Reccurence rec;
+	private Recurrence rec;
 
 	private LocalDate currDate = LocalDate.of(2023, 1, 15);
 	private LocalDate nextDate = currDate.plusDays(1);
 
 	@BeforeEach
 	public void startEach() {
-		rec = new Reccurence(Frequency.DAILY);
+		rec = new Recurrence(FrequencyType.DAILY, null, null, null, null);
 	}
 
 	@Test
@@ -59,8 +59,6 @@ public class DailyTest {
 
 	@Test
 	public void useCurrDate() {
-		assertEquals(rec.getNextDate(), null);
-
 		rec.setCurrDate(currDate);
 		assertEquals(rec.getNextDate(), nextDate);
 
@@ -73,17 +71,15 @@ public class DailyTest {
 
 	@Test
 	public void invalidUse() {
-		assertTrue(rec.isValid());
-		Reccurence badWeekly = new Reccurence(Frequency.DAILY);
-		assertThrows(NullPointerException.class, () -> badWeekly.setCurrDate());
+		assertThrows(NullPointerException.class, () -> rec.setCurrDate());
 	}
-	
+
 	@Test
 	public void stringConversion() {
-		Reccurence r = new Reccurence(FrequencyType.DAILY, null);
+		Recurrence r = new Recurrence(FrequencyType.DAILY, null, null, null, null);
 		String textToDatabase = r.convertToString();
-		
-		Reccurence r2 = new Reccurence(textToDatabase);
+
+		Recurrence r2 = new Recurrence(textToDatabase);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 11));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 15)), LocalDate.of(2023, 4, 16));
 	}

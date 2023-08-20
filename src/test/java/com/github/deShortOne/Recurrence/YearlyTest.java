@@ -1,7 +1,6 @@
 package com.github.deShortOne.Recurrence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -16,7 +15,7 @@ import org.junit.jupiter.api.Test;
 public class YearlyTest {
 	private Random random = new Random();
 
-	private Reccurence rec;
+	private Recurrence rec;
 
 	private LocalDate currDate = LocalDate.of(2023, 6, 15);
 	private MonthDay monthDay;
@@ -50,7 +49,7 @@ public class YearlyTest {
 			}
 		}
 		monthDay = MonthDay.of(randomMonthInYearInt, randomDayInMonthInt);
-		rec = new Reccurence(monthDay);
+		rec = new Recurrence(FrequencyType.YEARLY, monthDay, null, null, null);
 
 		nextDate = LocalDate.of(year, randomMonthInYearInt, randomDayInMonthInt);
 	}
@@ -97,8 +96,6 @@ public class YearlyTest {
 
 	@Test
 	public void useCurrDate() {
-		assertEquals(rec.getNextDate(), null);
-
 		rec.setCurrDate(currDate);
 		assertEquals(rec.getNextDate(), nextDate);
 
@@ -122,32 +119,26 @@ public class YearlyTest {
 
 	@Test
 	public void invalidUse() {
-		assertTrue(rec.isValid());
-
-		Reccurence badYearly = new Reccurence(Frequency.YEARLY);
-		assertFalse(badYearly.isValid());
-		assertThrows(IllegalArgumentException.class, () -> badYearly.getNextDate(currDate));
-		assertThrows(NullPointerException.class, () -> badYearly.setCurrDate());
-
-		assertThrows(NullPointerException.class, () -> rec.setMonthlyFrequency(null));
+		assertThrows(NullPointerException.class, () -> rec.setCurrDate());
 	}
-	
+
 	@Test
 	public void everyOtherYears() {
-		rec.setSkip(1);
+		rec = new Recurrence(FrequencyType.EVERY_OTHER_YEAR, monthDay, null, null, null);
+
 		rec.setCurrDate(currDate);
 		assertEquals(rec.setCurrDate(), nextDate.plusYears(1));
 		assertEquals(rec.setCurrDate(), nextDate.plusYears(3));
 		assertEquals(rec.setCurrDate(), nextDate.plusYears(5));
 		assertEquals(rec.setCurrDate(), nextDate.plusYears(7));
 	}
-	
+
 	@Test
 	public void stringConversion() {
-		Reccurence r = new Reccurence(FrequencyType.YEARLY, MonthDay.of(4, 13));
+		Recurrence r = new Recurrence(FrequencyType.YEARLY, MonthDay.of(4, 13), null, null, null);
 		String textToDatabase = r.convertToString();
-		
-		Reccurence r2 = new Reccurence(textToDatabase);
+
+		Recurrence r2 = new Recurrence(textToDatabase);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 13));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 5, 10)), LocalDate.of(2024, 4, 13));
 	}

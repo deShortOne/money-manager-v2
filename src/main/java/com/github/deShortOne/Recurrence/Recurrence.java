@@ -10,7 +10,7 @@ import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAdjuster;
 import java.time.YearMonth;
 
-public class Reccurence {
+public class Recurrence {
 
 	/**
 	 * Mandatory.
@@ -18,13 +18,13 @@ public class Reccurence {
 	private FrequencyType frequencyType = null;
 
 	/**
-	 * Mandatory.
+	 * Mandatory. Will be based off {@code FrequencyType}.
 	 */
 	private Frequency frequency = null;
 
 	/**
 	 * Defines how many weeks, months or years in between each event. Not used for
-	 * daily.
+	 * daily. Will be based off {@code FrequencyType}.
 	 */
 	private int skips = 0;
 
@@ -34,12 +34,12 @@ public class Reccurence {
 	private DayOfWeek dayOfWeek = null;
 
 	/**
-	 * Used for monthly and yearly, defines which day of month.
+	 * Used for monthly, defines which day of month.
 	 */
 	private DayNumber dayOfMonth = null;
 
 	/**
-	 * Used for yearly, defines which day in the year.
+	 * Used for yearly, defines which day in which month of the year.
 	 */
 	private MonthDay dayMonthOfYear = null;
 
@@ -59,7 +59,7 @@ public class Reccurence {
 	private LocalDate currDate = null;
 
 	/**
-	 * Creates a reccurence object.
+	 * Creates a recurrence object.
 	 * 
 	 * @param frequencyType
 	 * @param temporal      must be {@code DayOfWeek}, {@code DayNumber} or
@@ -71,41 +71,22 @@ public class Reccurence {
 	 *                                          {@code DayOfWeek}, {@code DayNumber}
 	 *                                          or {@code MonthDay}
 	 */
-	public Reccurence(FrequencyType frequencyType, TemporalAccessor temporal) {
-		if (frequencyType == null) {
-			throw new NullPointerException("FrequencyType cannot be null");
-		}
-		if (temporal == null && frequencyType.getFrequency() != Frequency.DAILY) {
-			throw new NullPointerException(
-					"Temporal cannot be null unless FrequencyType is Frequency.ONE_TIME or Frequency.DAILY");
-		}
-
-		this.frequencyType = frequencyType;
-		this.frequency = frequencyType.getFrequency();
-		this.skips = frequencyType.getSkips();
-		if (temporal instanceof DayOfWeek) {
-			dayOfWeek = (DayOfWeek) temporal;
-		} else if (temporal instanceof DayNumber) {
-			dayOfMonth = (DayNumber) temporal;
-		} else if (temporal instanceof MonthDay) {
-			dayMonthOfYear = (MonthDay) temporal;
-		} else if (temporal == null){
-			
-		} else {
-			throw new UnsupportedTemporalTypeException("Invalid value for temporal: " + temporal);
-		}
+	public Recurrence(FrequencyType frequencyType, TemporalAccessor temporal, LocalDate startDate, LocalDate endDate,
+			LocalDate currDate) {
+		updateSelf(frequencyType, temporal, startDate, endDate, currDate);
 	}
 
 	/**
 	 * Generates a Recurrence object based on {@code convertToString}.
+	 * 
 	 * @param text
 	 */
-	public Reccurence(String text) {
+	public Recurrence(String text) {
 		String[] fields = text.split(";");
 		frequencyType = FrequencyType.of(Integer.parseInt(fields[0]));
 		frequency = frequencyType.getFrequency();
 		skips = frequencyType.getSkips();
-		
+
 		if (fields[1] != "") {
 			startDate = LocalDate.parse(fields[1]);
 		}
@@ -131,67 +112,63 @@ public class Reccurence {
 		}
 	}
 
-	/**
-	 * Default frequency. Can be used to create frequency for daily.
-	 * 
-	 * @param frequency
-	 */
-	@Deprecated
-	public Reccurence(Frequency frequency) {
-		this.frequency = frequency;
-	}
+	private void updateSelf(FrequencyType frequencyType, TemporalAccessor temporal, LocalDate startDate,
+			LocalDate endDate, LocalDate currDate) {
+		resetVariables();
 
-	/**
-	 * Used to create frequency for weekly.
-	 * 
-	 * @param dayOfWeek
-	 */
-	@Deprecated
-	public Reccurence(DayOfWeek dayOfWeek) {
-		setWeeklyFrequency(dayOfWeek);
-	}
-
-	/**
-	 * Used to create frequency for month.
-	 * 
-	 * @param day
-	 */
-	@Deprecated
-	public Reccurence(DayNumber day) {
-		setMonthlyFrequency(day);
-	}
-
-	/**
-	 * Used to create frequency for year.
-	 * 
-	 * @param dayMonthOfYear
-	 */
-	@Deprecated
-	public Reccurence(MonthDay dayMonthOfYear) {
-		setYearlyFrequency(dayMonthOfYear);
-	}
-
-	public boolean isValid() {
-		switch (frequency) {
-		case WEEKLY:
-			return dayOfWeek != null;
-		case MONTHLY:
-			return dayOfMonth != null;
-		case YEARLY:
-			return dayMonthOfYear != null;
-		default: // skips DAILY, ONE_TIME
-			return true;
+		if (frequencyType == null) {
+			throw new NullPointerException("FrequencyType cannot be null");
 		}
+		if (temporal == null && frequencyType.getFrequency() != Frequency.ONE_TIME
+				&& frequencyType.getFrequency() != Frequency.DAILY) {
+			throw new NullPointerException(
+					"Temporal cannot be null unless FrequencyType is Frequency.ONE_TIME or Frequency.DAILY");
+		}
+
+		this.frequencyType = frequencyType;
+		this.frequency = frequencyType.getFrequency();
+		this.skips = frequencyType.getSkips();
+
+		if (temporal instanceof DayOfWeek) {
+			if (frequency != Frequency.WEEKLY) {
+				throw new IllegalArgumentException("DayOfWeek parameter for temporal is used for weekly frequency");
+			}
+			dayOfWeek = (DayOfWeek) temporal;
+		} else if (temporal instanceof DayNumber) {
+			if (frequency != Frequency.MONTHLY) {
+				throw new IllegalArgumentException("DayNumber parameter for temporal is used for monthly frequency");
+			}
+			dayOfMonth = (DayNumber) temporal;
+		} else if (temporal instanceof MonthDay) {
+			if (frequency != Frequency.YEARLY) {
+				throw new IllegalArgumentException("MonthDay parameter for temporal is used for yearly frequency");
+			}
+			dayMonthOfYear = (MonthDay) temporal;
+		} else if (temporal == null) {
+			if (frequency != Frequency.ONE_TIME && frequency != Frequency.DAILY) {
+				throw new IllegalArgumentException(
+						"Null parameter for temporal is used for one_time or daily frequency");
+			}
+		} else {
+			throw new UnsupportedTemporalTypeException("Invalid value for temporal: " + temporal);
+		}
+
+		this.startDate = startDate;
+		this.endDate = endDate;
+		this.currDate = currDate;
 	}
 
 	/**
 	 * Gets the next date using current date as date to be evaluated.
 	 * 
-	 * @return
+	 * @return next date or null if there is no date after
+	 * @throws NullPointerException if curr date is not set. Either run
+	 *                              setCurrDate(LocalDate currDate) or
+	 *                              getNextDate(LocalDate currDate)
 	 */
 	public LocalDate getNextDate() {
 		if (currDate == null)
-			return null;
+			throw new NullPointerException("Curr date cannot be null");
 		return getNextDate(currDate);
 	}
 
@@ -204,12 +181,9 @@ public class Reccurence {
 	 * 
 	 * @param ld date to be evaluated
 	 * @return next date
+	 * @throw IllegalArgumentException if key parameters are missing
 	 */
 	public LocalDate getNextDate(LocalDate ld) {
-		if (!isValid()) {
-			throw new IllegalArgumentException("Key parameters are missing");
-		}
-
 		if (startDate != null && ld.isBefore(startDate)) {
 			switch (frequency) {
 			case WEEKLY:
@@ -353,66 +327,6 @@ public class Reccurence {
 	}
 
 	/**
-	 * Sets the frequency to daily.
-	 * 
-	 * @return true
-	 */
-	public void setDayFrequency() {
-		resetVariables();
-		this.frequency = Frequency.DAILY;
-	}
-
-	/**
-	 * Sets the frequency to weekly.
-	 * 
-	 * @param dayOfWeek day the event should occur on
-	 * @return
-	 */
-	public void setWeeklyFrequency(DayOfWeek dayOfWeek) {
-		if (dayOfWeek == null)
-			throw new NullPointerException("dayOfWeek cannot be null");
-		resetVariables();
-		this.frequency = Frequency.WEEKLY;
-		this.dayOfWeek = dayOfWeek;
-	}
-
-	/**
-	 * Sets the frequency to monthly.
-	 * 
-	 * If day of month is outside of is not valid for a certain month, e.g. day of
-	 * month to 31st but is currently February, then defaults to the nearest valid
-	 * date.
-	 * 
-	 * @param day day the event should occur on
-	 * @return true if day is valid
-	 */
-	public void setMonthlyFrequency(DayNumber day) {
-		if (day == null)
-			throw new NullPointerException("dayofMonth cannot be null");
-		resetVariables();
-		this.frequency = Frequency.MONTHLY;
-		this.dayOfMonth = day;
-	}
-
-	/**
-	 * Sets the frequency to yearly.
-	 * 
-	 * @param dayMonthOfYear day and month the event the should occur on
-	 * @return true if day and month are valid
-	 */
-	public void setYearlyFrequency(MonthDay dayMonthOfYear) {
-		if (dayMonthOfYear == null)
-			throw new NullPointerException("dayMonthOfYear cannot be null");
-		resetVariables();
-		this.frequency = Frequency.YEARLY;
-		this.dayMonthOfYear = dayMonthOfYear;
-	}
-
-	public void setSkip(int skips) {
-		this.skips = skips;
-	}
-
-	/**
 	 * Each part is split by semi-colon. FrequencyTypeID;StartDate;EndDate;CurrDate;
 	 * The rest of the string is frequency specific
 	 * 
@@ -443,6 +357,11 @@ public class Reccurence {
 		}
 		genericConversionString.append(";EOF");
 		return genericConversionString.toString();
+	}
+
+	public void updateRecurrence(FrequencyType frequencyType, TemporalAccessor temporal, LocalDate startDate,
+			LocalDate endDate, LocalDate currDate) {
+		updateSelf(frequencyType, temporal, startDate, endDate, currDate);
 	}
 
 	private void resetVariables() {

@@ -7,7 +7,7 @@ public enum FrequencyType {
 	EVERY_OTHER_WEEK("Every other week", Frequency.WEEKLY, 1, 3),
 	EVERY_FOUR_WEEKS("Every four weeks", Frequency.WEEKLY, 3, 4),
 	MONTHLY("Monthly", Frequency.MONTHLY, 0, 5),
-	EVERY_OTHER_MONTHS("Every other month", Frequency.MONTHLY, 1, 6),
+	EVERY_OTHER_MONTH("Every other month", Frequency.MONTHLY, 1, 6),
 	EVERY_THREE_MONTHS("Every three months", Frequency.MONTHLY, 2, 7),
 	EVERY_FOUR_MONTHS("Every four months", Frequency.MONTHLY, 3, 8),
 	YEARLY("Yearly", Frequency.YEARLY, 0, 9),

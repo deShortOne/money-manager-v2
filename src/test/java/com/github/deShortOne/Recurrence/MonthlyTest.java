@@ -1,7 +1,6 @@
 package com.github.deShortOne.Recurrence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -15,23 +14,23 @@ import org.junit.jupiter.api.Test;
 public class MonthlyTest {
 	private Random random = new Random();
 
-	private Reccurence rec;
+	private Recurrence rec;
 
 	private LocalDate currDate = LocalDate.of(2023, 1, 15);
-	private DayNumber dayNumber;
+	private DayNumber dayOfMonth;
 	private LocalDate nextDate;
 
 	@BeforeEach
 	public void startEach() {
 		int randomDayInMonthInt = random.nextInt(31);
-		dayNumber = DayNumber.getDayNumber(randomDayInMonthInt + 1);
-		rec = new Reccurence(dayNumber);
-		nextDate = currDate.withDayOfMonth(dayNumber.getValue());
-		if (dayNumber.getValue() <= currDate.getDayOfMonth()) {
+		dayOfMonth = DayNumber.getDayNumber(randomDayInMonthInt + 1);
+		rec = new Recurrence(FrequencyType.MONTHLY, dayOfMonth, null, null, null);
+		nextDate = currDate.withDayOfMonth(dayOfMonth.getValue());
+		if (dayOfMonth.getValue() <= currDate.getDayOfMonth()) {
 			nextDate = nextDate.plusMonths(1);
 		}
 	}
-	
+
 	@Test
 	public void currDateBeforeStartDate() {
 		LocalDate startDate = currDate.plusMonths(4);
@@ -43,7 +42,7 @@ public class MonthlyTest {
 			properDate = properDate.plusMonths(1);
 		}
 		int daysInMonth = YearMonth.of(properDate.getYear(), properDate.getMonth()).lengthOfMonth();
-		properDate = properDate.withDayOfMonth(Math.min(daysInMonth, dayNumber.getValue()));
+		properDate = properDate.withDayOfMonth(Math.min(daysInMonth, dayOfMonth.getValue()));
 		assertEquals(rec.getNextDate(currDate), properDate);
 	}
 
@@ -71,13 +70,11 @@ public class MonthlyTest {
 
 	@Test
 	public void normalUsage() {
-		assertEquals(rec.getNextDate(currDate), nextDate, currDate + " " + nextDate + " " + dayNumber);
+		assertEquals(rec.getNextDate(currDate), nextDate, currDate + " " + nextDate + " " + dayOfMonth);
 	}
 
 	@Test
 	public void useCurrDate() {
-		assertEquals(rec.getNextDate(), null);
-
 		rec.setCurrDate(currDate);
 		assertEquals(rec.getNextDate(), nextDate);
 
@@ -101,39 +98,33 @@ public class MonthlyTest {
 
 	@Test
 	public void invalidUse() {
-		assertTrue(rec.isValid());
-
-		Reccurence badMonthly = new Reccurence(Frequency.MONTHLY);
-		assertFalse(badMonthly.isValid());
-		assertThrows(IllegalArgumentException.class, () -> badMonthly.getNextDate(currDate));
-		assertThrows(NullPointerException.class, () -> badMonthly.setCurrDate());
-
-		assertThrows(NullPointerException.class, () -> rec.setMonthlyFrequency(null));
+		assertThrows(NullPointerException.class, () -> rec.setCurrDate());
 	}
-	
+
 	@Test
 	public void everyOtherMonths() {
-		rec.setSkip(1);
+		rec = new Recurrence(FrequencyType.EVERY_OTHER_MONTH, dayOfMonth, null, null, null);
+
 		rec.setCurrDate(currDate);
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(1));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(3));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(5));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(7));
 	}
-	
+
 	@Test
 	public void everyThreeMonths() {
-		rec.setSkip(2);
+		rec = new Recurrence(FrequencyType.EVERY_THREE_MONTHS, dayOfMonth, null, null, null);
 		rec.setCurrDate(currDate);
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(2));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(5));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(8));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(11));
 	}
-	
+
 	@Test
 	public void everyFourMonths() {
-		rec.setSkip(3);
+		rec = new Recurrence(FrequencyType.EVERY_FOUR_MONTHS, dayOfMonth, null, null, null);
 		rec.setCurrDate(currDate);
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(3));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(7));
@@ -143,10 +134,10 @@ public class MonthlyTest {
 
 	@Test
 	public void stringConversion() {
-		Reccurence r = new Reccurence(FrequencyType.MONTHLY, DayNumber.of(15));
+		Recurrence r = new Recurrence(FrequencyType.MONTHLY, DayNumber.of(15), null, null, null);
 		String textToDatabase = r.convertToString();
-		
-		Reccurence r2 = new Reccurence(textToDatabase);
+
+		Recurrence r2 = new Recurrence(textToDatabase);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 15));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 15)), LocalDate.of(2023, 5, 15));
 	}
