@@ -4,10 +4,20 @@ import java.util.HashMap;
 
 public class MoneyManager {
 
-	private static HashMap<Integer, Account> accounts = DataHandler.getAccounts();
-	private static HashMap<Integer, Category> categories = DataHandler.getCategories();
-	private static HashMap<Integer, Payment> paymentMethods = DataHandler.getPaymentMethods();
+	private static HashMap<Integer, Account> accounts;
+	private static HashMap<Integer, Category> categories;
+	private static HashMap<Integer, Payment> paymentMethods;
 
+	static {
+		refreshTables();
+	}
+	
+	public static void refreshTables() {
+		accounts = DataHandler.getAccounts();
+		categories = DataHandler.getCategories();
+		paymentMethods = DataHandler.getPaymentMethods();
+	}
+	
 	public static Account getAccount(int id) {
 		return accounts.get(id);
 	}

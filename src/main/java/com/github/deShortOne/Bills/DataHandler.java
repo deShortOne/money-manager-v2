@@ -3,20 +3,23 @@ package com.github.deShortOne.Bills;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+
+import com.github.deShortOne.Engine.Account;
+import com.github.deShortOne.Engine.Category;
+import com.github.deShortOne.Engine.Payment;
 import com.github.deShortOne.SQL.SQLExecutor;
 
 public class DataHandler {
 
 	public static ArrayList<BillInfo> getBills() {
 		String getBills = new StringBuilder().append("SELECT bills.ID, ")
-			.append("	payer_accounts.AccountName AS payer, ")
-			.append("	payee_accounts.AccountName AS payee, ")
-			.append("	amount ")
+			.append("	PayerAccount, ")
+			.append("	PayeeAccount, ")
+			.append("	Amount, ")
+			.append("	Frequency, ")
+			.append("	PaymentID, ")
+			.append("	CategoryID ")
 			.append("FROM bills ")
-			.append("INNER JOIN accounts AS payer_accounts ")
-			.append("ON payer_accounts.ID = bills.PayerAccount ")
-			.append("INNER JOIN accounts AS payee_accounts ")
-			.append("ON payee_accounts.ID = bills.PayeeAccount ")
 			.toString();
 
 		ArrayList<BillInfo> output = new ArrayList<>();
@@ -34,16 +37,19 @@ public class DataHandler {
 
 	public static boolean updateBill(BillInfo updatedBill) {
 		String updateBill = new StringBuilder().append("UPDATE bills ")
-			.append("SET PayerAccount = (SELECT ID FROM accounts WHERE AccountName = '%s'), ")
-			.append("PayeeAccount = (SELECT ID FROM accounts WHERE AccountName = '%s'), ")
-			.append("Amount = %f ")
+			.append("SET PayerAccount = %d, ")
+			.append("PayeeAccount = %d, ")
+			.append("Amount = %f, ")
+			.append("PaymentID = %d, ")
+			.append("CategoryID = %d ")
 			.append("WHERE ID = %d")
 			.toString();
 
 		boolean isSuccess;
 		try {
-			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerName(), updatedBill.getPayeeName(),
-					updatedBill.getAmount(), updatedBill.getID()));
+			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerAccount().getId(),
+					updatedBill.getPayeeAccount().getId(), updatedBill.getAmount(),
+					updatedBill.getPaymentMethod().getId(), updatedBill.getCategory().getId(), updatedBill.getID()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -53,43 +59,43 @@ public class DataHandler {
 		return isSuccess;
 	}
 
-	public static BillInfo addNewBill(String payerAccount, String payeeAccount, double amount) {
+	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Category category,
+			Payment payment) {
 		String addBill = new StringBuilder().append("INSERT INTO bills ")
-			.append("(PayerAccount, PayeeAccount, Amount)")
+			.append("(PayerAccount, PayeeAccount, Amount, CategoryID, PaymentID)")
 			.append("VALUES")
-			.append("((SELECT ID FROM accounts WHERE AccountName = '%s'), "
-					+ "(SELECT ID FROM accounts WHERE AccountName = '%s'), %f);")
+			.append("(%d, %d, %f, %d, %d);")
 			.toString();
 
 		String getBill = new StringBuilder().append("SELECT bills.ID, ")
-				.append("	payer_accounts.AccountName AS payer, ")
-				.append("	payee_accounts.AccountName AS payee, ")
-				.append("	amount ")
-				.append("FROM bills ")
-				.append("INNER JOIN accounts AS payer_accounts ")
-				.append("ON payer_accounts.ID = bills.PayerAccount ")
-				.append("INNER JOIN accounts AS payee_accounts ")
-				.append("ON payee_accounts.ID = bills.PayeeAccount ")
-				.append("WHERE bills.ID = %d ")
-				.toString();
-		
+			.append("	PayerAccount, ")
+			.append("	PayeeAccount, ")
+			.append("	Amount, ")
+			.append("	Frequency, ")
+			.append("	PaymentID, ")
+			.append("	CategoryID ")
+			.append("FROM bills ")
+			.append("WHERE ID = %d")
+			.toString();
+
 		BillInfo bi = null;
 		try {
-			SQLExecutor.changeTable(String.format(addBill, payerAccount, payeeAccount, amount));
-		
+			SQLExecutor.changeTable(String.format(addBill, payerAccount.getId(), payeeAccount.getId(), amount,
+					category.getId(), payment.getId()));
+
 			ResultSet results = SQLExecutor.getTable("SELECT LAST_INSERT_ID() AS id;");
 			int id = -1;
 			if (results.next()) {
 				id = results.getInt("id");
 			}
 			results.close();
-			
+
 			results = SQLExecutor.getTable(String.format(getBill, id));
 			if (results.next()) {
 				bi = new BillInfo(results);
 			}
 			results.close();
-			
+
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

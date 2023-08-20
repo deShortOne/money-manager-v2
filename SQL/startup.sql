@@ -41,7 +41,7 @@ CREATE TABLE bills (
 	FOREIGN KEY(PaymentID) REFERENCES payment_methods(ID),
 	FOREIGN KEY(CategoryID) REFERENCES categories(ID)
 );
-INSERT INTO bills (PayerAccount, PayeeAccount, Amount) VALUES (1, 2, 10), (1, 2, 20), (1, 2, 30), (1, 2, 40), (1, 2, 50), (1, 2, 60);
+INSERT INTO bills (PayerAccount, PayeeAccount, Amount, PaymentID, CategoryID) VALUES (1, 2, 10, 1, 1), (1, 2, 20, 1, 1), (1, 2, 30, 1, 1), (1, 2, 40, 1, 1), (1, 2, 50, 1, 1), (1, 2, 60, 1, 1);
 
 CREATE TABLE transactions (
 	ID INT AUTO_INCREMENT,

@@ -2,16 +2,22 @@ package com.github.deShortOne.Bills;
 
 import java.util.ArrayList;
 
+import com.github.deShortOne.Engine.Account;
+import com.github.deShortOne.Engine.Category;
+import com.github.deShortOne.Engine.MoneyManager;
+import com.github.deShortOne.Engine.Payment;
+
 public class MainBill {
 
 	public static void main(String[] args) {
+		MoneyManager.getAccount(2).getId(); // !! MUST ENSURE MONEYMANAGER ALREADY INITALISED
 		BillInfo bi = getBills();
 		bi.setAmount(-5);
 
-		String payerName = bi.getPayerName();
-		String payeeName = bi.getPayeeName();
-		bi.setPayeeName(payerName);
-		bi.setPayerName(payeeName);
+		Account payerName = bi.getPayerAccount();
+		Account payeeName = bi.getPayeeAccount();
+		bi.setPayeeAccount(payerName);
+		bi.setPayerAccount(payeeName);
 
 		boolean isSuccess = updateBill(bi);
 
@@ -23,23 +29,24 @@ public class MainBill {
 
 		getBills();
 
-		BillInfo biNew = addNewBill("Acc 2 - payee", "Acc 1 - payer", -10);
+		BillInfo biNew = addNewBill(MoneyManager.getAccount(2), MoneyManager.getAccount(1), -10,
+				MoneyManager.getCategory(1), MoneyManager.getPayment(1));
 		if (biNew == null) {
 			System.out.println("Insert failed");
 		} else {
 			System.out.println("Insert succeeded");
-			System.out.println(String.format("%5s%15s%15s%15s", "ID", "Payer", "Payee", "Amount"));
-			System.out.println(
-					String.format("%5d%15s%15s%15s", bi.getID(), bi.getPayerName(), bi.getPayeeName(), bi.getAmount()));
+			System.out.println(BillInfo.headers);
+			System.out.println(biNew);
+			System.out.println("All");
+			getBills();
 		}
 	}
 
 	public static BillInfo getBills() {
 		ArrayList<BillInfo> bills = DataHandler.getBills();
-		System.out.println(String.format("%5s%15s%15s%15s", "ID", "Payer", "Payee", "Amount"));
+		System.out.println(BillInfo.headers);
 		for (BillInfo bi : bills) {
-			System.out.println(
-					String.format("%5d%15s%15s%15s", bi.getID(), bi.getPayerName(), bi.getPayeeName(), bi.getAmount()));
+			System.out.println(bi);
 		}
 		return bills.get(0);
 	}
@@ -48,7 +55,8 @@ public class MainBill {
 		return DataHandler.updateBill(updatedBill);
 	}
 
-	public static BillInfo addNewBill(String payerAccount, String payeeAccount, double amount) {
-		return DataHandler.addNewBill(payerAccount, payeeAccount, amount);
+	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Category category,
+			Payment payment) {
+		return DataHandler.addNewBill(payerAccount, payeeAccount, amount, category, payment);
 	}
 }
