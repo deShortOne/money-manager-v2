@@ -7,6 +7,7 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.DayOfWeek;
 import java.time.LocalDate;
+import java.time.MonthDay;
 import java.util.HashMap;
 import java.util.Random;
 
@@ -140,5 +141,15 @@ public class WeeklyTest {
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(3));
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(7));
 		assertEquals(rec.setCurrDate(), nextDate.plusWeeks(11));
+	}
+	
+	@Test
+	public void stringConversion() {
+		Reccurence r = new Reccurence(FrequencyType.WEEKLY, DayOfWeek.of(1));
+		String textToDatabase = r.convertToString();
+		
+		Reccurence r2 = new Reccurence(textToDatabase);
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 9)), LocalDate.of(2023, 4, 10));
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 17));
 	}
 }

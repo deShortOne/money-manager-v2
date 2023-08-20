@@ -141,4 +141,14 @@ public class YearlyTest {
 		assertEquals(rec.setCurrDate(), nextDate.plusYears(5));
 		assertEquals(rec.setCurrDate(), nextDate.plusYears(7));
 	}
+	
+	@Test
+	public void stringConversion() {
+		Reccurence r = new Reccurence(FrequencyType.YEARLY, MonthDay.of(4, 13));
+		String textToDatabase = r.convertToString();
+		
+		Reccurence r2 = new Reccurence(textToDatabase);
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 13));
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 5, 10)), LocalDate.of(2024, 4, 13));
+	}
 }

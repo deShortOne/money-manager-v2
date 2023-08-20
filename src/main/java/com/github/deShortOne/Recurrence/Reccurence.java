@@ -5,10 +5,17 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.MonthDay;
 import java.time.temporal.TemporalAdjusters;
+import java.time.temporal.UnsupportedTemporalTypeException;
+import java.time.temporal.TemporalAccessor;
 import java.time.temporal.TemporalAdjuster;
 import java.time.YearMonth;
 
 public class Reccurence {
+
+	/**
+	 * Mandatory.
+	 */
+	private FrequencyType frequencyType = null;
 
 	/**
 	 * Mandatory.
@@ -52,10 +59,84 @@ public class Reccurence {
 	private LocalDate currDate = null;
 
 	/**
+	 * Creates a reccurence object.
+	 * 
+	 * @param frequencyType
+	 * @param temporal      must be {@code DayOfWeek}, {@code DayNumber} or
+	 *                      {@code MonthDay}
+	 * @throws NullPointerException             if either frequencyType is null or
+	 *                                          temporal is null and frequencyType
+	 *                                          frequency is not ONE_TIME or DAILY
+	 * @throws UnsupportedTemporalTypeException if temporal is not
+	 *                                          {@code DayOfWeek}, {@code DayNumber}
+	 *                                          or {@code MonthDay}
+	 */
+	public Reccurence(FrequencyType frequencyType, TemporalAccessor temporal) {
+		if (frequencyType == null) {
+			throw new NullPointerException("FrequencyType cannot be null");
+		}
+		if (temporal == null && frequencyType.getFrequency() != Frequency.DAILY) {
+			throw new NullPointerException(
+					"Temporal cannot be null unless FrequencyType is Frequency.ONE_TIME or Frequency.DAILY");
+		}
+
+		this.frequencyType = frequencyType;
+		this.frequency = frequencyType.getFrequency();
+		this.skips = frequencyType.getSkips();
+		if (temporal instanceof DayOfWeek) {
+			dayOfWeek = (DayOfWeek) temporal;
+		} else if (temporal instanceof DayNumber) {
+			dayOfMonth = (DayNumber) temporal;
+		} else if (temporal instanceof MonthDay) {
+			dayMonthOfYear = (MonthDay) temporal;
+		} else if (temporal == null){
+			
+		} else {
+			throw new UnsupportedTemporalTypeException("Invalid value for temporal: " + temporal);
+		}
+	}
+
+	/**
+	 * Generates a Recurrence object based on {@code convertToString}.
+	 * @param text
+	 */
+	public Reccurence(String text) {
+		String[] fields = text.split(";");
+		frequencyType = FrequencyType.of(Integer.parseInt(fields[0]));
+		frequency = frequencyType.getFrequency();
+		skips = frequencyType.getSkips();
+		
+		if (fields[1] != "") {
+			startDate = LocalDate.parse(fields[1]);
+		}
+		if (fields[2] != "") {
+			endDate = LocalDate.parse(fields[1]);
+		}
+		if (fields[3] != "") {
+			currDate = LocalDate.parse(fields[1]);
+		}
+		switch (frequency) {
+		case ONE_TIME:
+		case DAILY:
+			break;
+		case WEEKLY:
+			dayOfWeek = DayOfWeek.of(Integer.parseInt(fields[4]));
+			break;
+		case MONTHLY:
+			dayOfMonth = DayNumber.of(Integer.parseInt(fields[4]));
+			break;
+		case YEARLY:
+			dayMonthOfYear = MonthDay.parse(fields[4]);
+			break;
+		}
+	}
+
+	/**
 	 * Default frequency. Can be used to create frequency for daily.
 	 * 
 	 * @param frequency
 	 */
+	@Deprecated
 	public Reccurence(Frequency frequency) {
 		this.frequency = frequency;
 	}
@@ -65,6 +146,7 @@ public class Reccurence {
 	 * 
 	 * @param dayOfWeek
 	 */
+	@Deprecated
 	public Reccurence(DayOfWeek dayOfWeek) {
 		setWeeklyFrequency(dayOfWeek);
 	}
@@ -74,6 +156,7 @@ public class Reccurence {
 	 * 
 	 * @param day
 	 */
+	@Deprecated
 	public Reccurence(DayNumber day) {
 		setMonthlyFrequency(day);
 	}
@@ -83,6 +166,7 @@ public class Reccurence {
 	 * 
 	 * @param dayMonthOfYear
 	 */
+	@Deprecated
 	public Reccurence(MonthDay dayMonthOfYear) {
 		setYearlyFrequency(dayMonthOfYear);
 	}
@@ -136,11 +220,11 @@ public class Reccurence {
 				return ld;
 			case MONTHLY:
 				ld = ld.withMonth(startDate.getMonthValue());
-				if (ld.getDayOfMonth() >= dayOfMonth.getDay()) {
+				if (ld.getDayOfMonth() >= dayOfMonth.getValue()) {
 					ld = ld.plusMonths(1);
 				}
 				int daysInMonth = YearMonth.of(ld.getYear(), ld.getMonth()).lengthOfMonth();
-				ld = ld.withDayOfMonth(Math.min(daysInMonth, dayOfMonth.getDay()));
+				ld = ld.withDayOfMonth(Math.min(daysInMonth, dayOfMonth.getValue()));
 				return ld;
 			case YEARLY:
 				LocalDate ld2 = LocalDate.of(startDate.getYear(), dayMonthOfYear.getMonthValue(),
@@ -165,13 +249,13 @@ public class Reccurence {
 			ld = ld.with(ta).plusWeeks(skips);
 			break;
 		case MONTHLY:
-			if (ld.getDayOfMonth() >= dayOfMonth.getDay()
+			if (ld.getDayOfMonth() >= dayOfMonth.getValue()
 					|| YearMonth.of(ld.getYear(), ld.getMonth()).lengthOfMonth() == ld.getDayOfMonth()) {
 				ld = ld.plusMonths(1);
 			}
 			ld = ld.plusMonths(skips);
 			int daysInMonth = YearMonth.of(ld.getYear(), ld.getMonth()).lengthOfMonth();
-			ld = ld.withDayOfMonth(Math.min(daysInMonth, dayOfMonth.getDay()));
+			ld = ld.withDayOfMonth(Math.min(daysInMonth, dayOfMonth.getValue()));
 			break;
 		case YEARLY:
 			LocalDate ld2 = LocalDate.of(ld.getYear(), dayMonthOfYear.getMonthValue(), dayMonthOfYear.getDayOfMonth());
@@ -326,6 +410,39 @@ public class Reccurence {
 
 	public void setSkip(int skips) {
 		this.skips = skips;
+	}
+
+	/**
+	 * Each part is split by semi-colon. FrequencyTypeID;StartDate;EndDate;CurrDate;
+	 * The rest of the string is frequency specific
+	 * 
+	 * @return
+	 */
+	public String convertToString() {
+		StringBuilder genericConversionString = new StringBuilder().append(frequencyType.getID())
+			.append(";")
+			.append(startDate == null ? "" : startDate.toString())
+			.append(";")
+			.append(endDate == null ? "" : endDate.toString())
+			.append(";")
+			.append(currDate == null ? "" : currDate.toString())
+			.append(";");
+
+		switch (frequency) {
+		case WEEKLY:
+			genericConversionString.append(dayOfWeek.getValue());
+			break;
+		case MONTHLY:
+			genericConversionString.append(dayOfMonth.getValue());
+			break;
+		case YEARLY:
+			genericConversionString.append(dayMonthOfYear.toString());
+			break;
+		default: // skip ONE_TIME and DAILY
+			break;
+		}
+		genericConversionString.append(";EOF");
+		return genericConversionString.toString();
 	}
 
 	private void resetVariables() {

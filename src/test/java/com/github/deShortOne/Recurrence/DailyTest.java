@@ -77,4 +77,14 @@ public class DailyTest {
 		Reccurence badWeekly = new Reccurence(Frequency.DAILY);
 		assertThrows(NullPointerException.class, () -> badWeekly.setCurrDate());
 	}
+	
+	@Test
+	public void stringConversion() {
+		Reccurence r = new Reccurence(FrequencyType.DAILY, null);
+		String textToDatabase = r.convertToString();
+		
+		Reccurence r2 = new Reccurence(textToDatabase);
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 11));
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 15)), LocalDate.of(2023, 4, 16));
+	}
 }

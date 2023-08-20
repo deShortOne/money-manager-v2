@@ -6,6 +6,7 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.time.YearMonth;
 import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -23,10 +24,10 @@ public class MonthlyTest {
 	@BeforeEach
 	public void startEach() {
 		int randomDayInMonthInt = random.nextInt(31);
-		dayNumber = DayNumber.getDay(randomDayInMonthInt + 1);
+		dayNumber = DayNumber.getDayNumber(randomDayInMonthInt + 1);
 		rec = new Reccurence(dayNumber);
-		nextDate = currDate.withDayOfMonth(dayNumber.getDay());
-		if (dayNumber.getDay() <= currDate.getDayOfMonth()) {
+		nextDate = currDate.withDayOfMonth(dayNumber.getValue());
+		if (dayNumber.getValue() <= currDate.getDayOfMonth()) {
 			nextDate = nextDate.plusMonths(1);
 		}
 	}
@@ -41,6 +42,8 @@ public class MonthlyTest {
 		while (properDate.isBefore(startDate)) {
 			properDate = properDate.plusMonths(1);
 		}
+		int daysInMonth = YearMonth.of(properDate.getYear(), properDate.getMonth()).lengthOfMonth();
+		properDate = properDate.withDayOfMonth(Math.min(daysInMonth, dayNumber.getValue()));
 		assertEquals(rec.getNextDate(currDate), properDate);
 	}
 
@@ -136,5 +139,15 @@ public class MonthlyTest {
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(7));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(11));
 		assertEquals(rec.setCurrDate(), nextDate.plusMonths(15));
+	}
+
+	@Test
+	public void stringConversion() {
+		Reccurence r = new Reccurence(FrequencyType.MONTHLY, DayNumber.of(15));
+		String textToDatabase = r.convertToString();
+		
+		Reccurence r2 = new Reccurence(textToDatabase);
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 15));
+		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 15)), LocalDate.of(2023, 5, 15));
 	}
 }
