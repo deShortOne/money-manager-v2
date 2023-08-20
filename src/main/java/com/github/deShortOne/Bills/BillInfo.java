@@ -7,18 +7,29 @@ import com.github.deShortOne.Engine.Account;
 import com.github.deShortOne.Engine.Category;
 import com.github.deShortOne.Engine.MoneyManager;
 import com.github.deShortOne.Engine.Payment;
+import com.github.deShortOne.Recurrence.Recurrence;
 
 public class BillInfo {
 
-	private static String stringFormat = "%5s%20s%20s%10s%20s%20s";
+	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s";
 
-	public static final String headers = String.format(stringFormat, "ID", "Payer", "Payee", "Amount", "Category",
-			"Payment Method");
+	public static final String headers = String.format(stringFormat, "ID", "Payer", "Payee", "Amount", "Frequency",
+			"Category", "Payment Method");
 
 	private final int ID;
 	private Account payer;
 	private Account payee;
 	private double amount;
+	private Recurrence frequency;
+	
+	public Recurrence getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(Recurrence frequency) {
+		this.frequency = frequency;
+	}
+
 	private Category category;
 	private Payment paymentMethod;
 
@@ -27,6 +38,7 @@ public class BillInfo {
 		this.payer = MoneyManager.getAccount(bill.getInt("PayerAccount"));
 		this.payee = MoneyManager.getAccount(bill.getInt("PayeeAccount"));
 		this.amount = bill.getDouble("Amount");
+		this.frequency = new Recurrence(bill.getString("Frequency"));
 		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
 		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
 	}
@@ -78,7 +90,7 @@ public class BillInfo {
 	@Override
 	public String toString() {
 		return String.format(stringFormat, ID, payer.getAccountName(), payee.getAccountName(), amount,
-				category.getName(), paymentMethod.getName());
+				frequency.getFrequency(), category.getName(), paymentMethod.getName());
 
 	}
 }

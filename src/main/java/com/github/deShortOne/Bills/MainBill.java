@@ -1,11 +1,14 @@
 package com.github.deShortOne.Bills;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.github.deShortOne.Engine.Account;
 import com.github.deShortOne.Engine.Category;
 import com.github.deShortOne.Engine.MoneyManager;
 import com.github.deShortOne.Engine.Payment;
+import com.github.deShortOne.Recurrence.FrequencyType;
+import com.github.deShortOne.Recurrence.Recurrence;
 
 public class MainBill {
 
@@ -29,7 +32,8 @@ public class MainBill {
 
 		getBills();
 
-		BillInfo biNew = addNewBill(MoneyManager.getAccount(2), MoneyManager.getAccount(1), -10,
+		BillInfo biNew = addNewBill(MoneyManager.getAccount(2), MoneyManager.getAccount(1), -10, 
+				new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2023, 1, 10), LocalDate.of(2023, 1, 10), LocalDate.of(2023, 1, 10)),
 				MoneyManager.getCategory(1), MoneyManager.getPayment(1));
 		if (biNew == null) {
 			System.out.println("Insert failed");
@@ -55,8 +59,8 @@ public class MainBill {
 		return DataHandler.updateBill(updatedBill);
 	}
 
-	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Category category,
-			Payment payment) {
-		return DataHandler.addNewBill(payerAccount, payeeAccount, amount, category, payment);
+	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Recurrence frequency,
+			Category category, Payment payment) {
+		return DataHandler.addNewBill(payerAccount, payeeAccount, amount, frequency, category, payment);
 	}
 }

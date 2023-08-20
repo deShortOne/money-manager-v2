@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import com.github.deShortOne.Engine.Account;
 import com.github.deShortOne.Engine.Category;
 import com.github.deShortOne.Engine.Payment;
+import com.github.deShortOne.Recurrence.Recurrence;
 import com.github.deShortOne.SQL.SQLExecutor;
 
 public class DataHandler {
@@ -40,16 +41,18 @@ public class DataHandler {
 			.append("SET PayerAccount = %d, ")
 			.append("PayeeAccount = %d, ")
 			.append("Amount = %f, ")
+			.append("Frequency = '%s', ")
 			.append("PaymentID = %d, ")
 			.append("CategoryID = %d ")
-			.append("WHERE ID = %d")
+			.append("WHERE ID = %d;")
 			.toString();
 
 		boolean isSuccess;
 		try {
 			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerAccount().getId(),
 					updatedBill.getPayeeAccount().getId(), updatedBill.getAmount(),
-					updatedBill.getPaymentMethod().getId(), updatedBill.getCategory().getId(), updatedBill.getID()));
+					updatedBill.getFrequency().convertToString(), updatedBill.getPaymentMethod().getId(),
+					updatedBill.getCategory().getId(), updatedBill.getID()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -59,12 +62,12 @@ public class DataHandler {
 		return isSuccess;
 	}
 
-	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Category category,
-			Payment payment) {
+	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Recurrence frequency,
+			Category category, Payment payment) {
 		String addBill = new StringBuilder().append("INSERT INTO bills ")
-			.append("(PayerAccount, PayeeAccount, Amount, CategoryID, PaymentID)")
+			.append("(PayerAccount, PayeeAccount, Amount, Frequency, CategoryID, PaymentID)")
 			.append("VALUES")
-			.append("(%d, %d, %f, %d, %d);")
+			.append("(%d, %d, %f, '%s', %d, %d);")
 			.toString();
 
 		String getBill = new StringBuilder().append("SELECT bills.ID, ")
@@ -80,8 +83,9 @@ public class DataHandler {
 
 		BillInfo bi = null;
 		try {
-			SQLExecutor.changeTable(String.format(addBill, payerAccount.getId(), payeeAccount.getId(), amount,
-					category.getId(), payment.getId()));
+			String a = String.format(addBill, payerAccount.getId(), payeeAccount.getId(), amount,
+					frequency.convertToString(), category.getId(), payment.getId());
+			SQLExecutor.changeTable(a);
 
 			ResultSet results = SQLExecutor.getTable("SELECT LAST_INSERT_ID() AS id;");
 			int id = -1;

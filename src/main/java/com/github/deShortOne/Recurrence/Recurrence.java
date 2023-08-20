@@ -157,6 +157,10 @@ public class Recurrence {
 		this.endDate = endDate;
 		this.currDate = currDate;
 	}
+	
+	public String getFrequency() {
+		return frequencyType.getName();
+	}
 
 	/**
 	 * Gets the next date using current date as date to be evaluated.
