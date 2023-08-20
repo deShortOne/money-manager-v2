@@ -12,10 +12,10 @@ import com.github.deShortOne.Recurrence.Recurrence;
 
 public class BillInfo {
 
-	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s";
+	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s%20s";
 
 	public static final String headers = String.format(stringFormat, "ID", "Payer", "Payee", "Amount", "Frequency",
-			"Last Paid", "Category", "Payment Method");
+			"Last Paid", "Due Date", "Category", "Payment Method");
 
 	private final int ID;
 	private Account payer;
@@ -25,13 +25,17 @@ public class BillInfo {
 	private LocalDate lastPaid;
 	private Category category;
 	private Payment paymentMethod;
+	private LocalDate startDate;
+	private LocalDate endDate;
 
 	public BillInfo(ResultSet bill) throws SQLException {
 		this.ID = bill.getInt("ID");
 		this.payer = MoneyManager.getAccount(bill.getInt("PayerAccount"));
 		this.payee = MoneyManager.getAccount(bill.getInt("PayeeAccount"));
 		this.amount = bill.getDouble("Amount");
-		this.frequency = new Recurrence(bill.getString("Frequency"));
+		this.startDate = bill.getDate("StartDate") == null ? null : bill.getDate("StartDate").toLocalDate();
+		this.endDate = bill.getDate("EndDate") == null ? null : bill.getDate("EndDate").toLocalDate();
+		this.frequency = new Recurrence(bill.getString("Frequency"), startDate, endDate);
 		this.lastPaid = bill.getDate("DatePaid") == null ? null : bill.getDate("DatePaid").toLocalDate();
 		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
 		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
@@ -92,6 +96,38 @@ public class BillInfo {
 	public void setLastPaid(LocalDate lastPaid) {
 		this.lastPaid = lastPaid;
 	}
+	
+	public LocalDate getStartDate() {
+		return startDate;
+	}
+
+	public void setStartDate(LocalDate startDate) {
+		frequency.setStartDate(startDate);
+		this.startDate = startDate;
+	}
+
+	public LocalDate getEndDate() {
+		return endDate;
+	}
+
+	public void setEndDate(LocalDate endDate) {
+		frequency.setEndDate(endDate);
+		this.endDate = endDate;
+	}
+
+	public LocalDate getDueDate() {
+		LocalDate dateToProcess;
+		if (lastPaid != null) {
+			dateToProcess = lastPaid;
+		} else if (frequency.getCurrDate() != null) {
+			dateToProcess = frequency.getCurrDate();
+		} else if (frequency.getStartDate() != null) {
+			dateToProcess = frequency.getStartDate();
+		} else {
+			dateToProcess = LocalDate.now();
+		}
+		return frequency.getNextDate(dateToProcess);
+	}
 
 	public int getID() {
 		return ID;
@@ -100,7 +136,7 @@ public class BillInfo {
 	@Override
 	public String toString() {
 		return String.format(stringFormat, ID, payer.getAccountName(), payee.getAccountName(), amount,
-				frequency.getFrequency(), lastPaid, category.getName(), paymentMethod.getName());
+				frequency.getFrequency(), lastPaid, getDueDate(), category.getName(), paymentMethod.getName());
 
 	}
 }

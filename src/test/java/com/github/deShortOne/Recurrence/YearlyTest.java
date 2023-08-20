@@ -138,7 +138,7 @@ public class YearlyTest {
 		Recurrence r = new Recurrence(FrequencyType.YEARLY, MonthDay.of(4, 13), null, null, null);
 		String textToDatabase = r.convertToString();
 
-		Recurrence r2 = new Recurrence(textToDatabase);
+		Recurrence r2 = new Recurrence(textToDatabase, null, null);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 13));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 5, 10)), LocalDate.of(2024, 4, 13));
 	}

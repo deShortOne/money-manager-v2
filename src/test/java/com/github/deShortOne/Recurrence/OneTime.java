@@ -33,7 +33,7 @@ public class OneTime {
 		Recurrence r = new Recurrence(FrequencyType.ONCE, null, startDate, null, null);
 		String textToDatabase = r.convertToString();
 
-		Recurrence r2 = new Recurrence(textToDatabase);
+		Recurrence r2 = new Recurrence(textToDatabase, null, null);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 1, 15)), LocalDate.of(2023, 1, 20));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 1, 20)), null);
 	}

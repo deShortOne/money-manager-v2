@@ -79,7 +79,7 @@ public class DailyTest {
 		Recurrence r = new Recurrence(FrequencyType.DAILY, null, null, null, null);
 		String textToDatabase = r.convertToString();
 
-		Recurrence r2 = new Recurrence(textToDatabase);
+		Recurrence r2 = new Recurrence(textToDatabase, null, null);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 11));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 15)), LocalDate.of(2023, 4, 16));
 	}

@@ -2,6 +2,7 @@ package com.github.deShortOne.Bills;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.github.deShortOne.Engine.Account;
@@ -20,6 +21,8 @@ public class DataHandler {
 			.append("	Frequency, ")
 			.append("	PaymentID, ")
 			.append("	CategoryID, ")
+			.append("	StartDate, ")
+			.append("	EndDate, ")
 			.append("	transactions.DatePaid ")
 			.append("FROM bills ")
 			.append("LEFT JOIN ( ")
@@ -51,7 +54,9 @@ public class DataHandler {
 			.append("Amount = %f, ")
 			.append("Frequency = '%s', ")
 			.append("PaymentID = %d, ")
-			.append("CategoryID = %d ")
+			.append("CategoryID = %d, ")
+			.append("StartDate = str_to_date('%s', '%%Y-%%m-%%d'), ")
+			.append("EndDate = str_to_date('%s', '%%Y-%%m-%%d') ")
 			.append("WHERE ID = %d;")
 			.toString();
 
@@ -60,7 +65,8 @@ public class DataHandler {
 			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerAccount().getId(),
 					updatedBill.getPayeeAccount().getId(), updatedBill.getAmount(),
 					updatedBill.getFrequency().convertToString(), updatedBill.getPaymentMethod().getId(),
-					updatedBill.getCategory().getId(), updatedBill.getID()));
+					updatedBill.getCategory().getId(), updatedBill.getStartDate(), updatedBill.getEndDate(),
+					updatedBill.getID()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -71,11 +77,11 @@ public class DataHandler {
 	}
 
 	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Recurrence frequency,
-			Category category, Payment payment) {
+			Category category, Payment payment, LocalDate startDate, LocalDate endDate) {
 		String addBill = new StringBuilder().append("INSERT INTO bills ")
-			.append("(PayerAccount, PayeeAccount, Amount, Frequency, CategoryID, PaymentID)")
+			.append("(PayerAccount, PayeeAccount, Amount, Frequency, CategoryID, PaymentID, StartDate, EndDate)")
 			.append("VALUES")
-			.append("(%d, %d, %f, '%s', %d, %d);")
+			.append("(%d, %d, %f, '%s', %d, %d, str_to_date('%s', '%%Y-%%m-%%d'), str_to_date('%s','%%Y-%%m-%%d'));")
 			.toString();
 
 		String getBill = new StringBuilder().append("SELECT bills.ID, ")
@@ -85,7 +91,9 @@ public class DataHandler {
 			.append("	Frequency, ")
 			.append("	transactions.DatePaid, ")
 			.append("	PaymentID, ")
-			.append("	CategoryID ")
+			.append("	CategoryID, ")
+			.append("	StartDate, ")
+			.append("	EndDate ")
 			.append("FROM bills ")
 			.append("LEFT JOIN ( ")
 			.append("	SELECT BillID, ")
@@ -100,7 +108,7 @@ public class DataHandler {
 		BillInfo bi = null;
 		try {
 			String a = String.format(addBill, payerAccount.getId(), payeeAccount.getId(), amount,
-					frequency.convertToString(), category.getId(), payment.getId());
+					frequency.convertToString(), category.getId(), payment.getId(), startDate, endDate);
 			SQLExecutor.changeTable(a);
 
 			ResultSet results = SQLExecutor.getTable("SELECT LAST_INSERT_ID() AS id;");

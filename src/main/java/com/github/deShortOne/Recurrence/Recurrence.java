@@ -81,35 +81,29 @@ public class Recurrence {
 	 * 
 	 * @param text
 	 */
-	public Recurrence(String text) {
+	public Recurrence(String text, LocalDate startDate, LocalDate endDate) {
 		String[] fields = text.split(";");
 		frequencyType = FrequencyType.of(Integer.parseInt(fields[0]));
 		frequency = frequencyType.getFrequency();
 		skips = frequencyType.getSkips();
 
-		if (fields[1] != "") {
-			startDate = LocalDate.parse(fields[1]);
-		}
-		if (fields[2] != "") {
-			endDate = LocalDate.parse(fields[1]);
-		}
-		if (fields[3] != "") {
-			currDate = LocalDate.parse(fields[1]);
-		}
 		switch (frequency) {
 		case ONE_TIME:
 		case DAILY:
 			break;
 		case WEEKLY:
-			dayOfWeek = DayOfWeek.of(Integer.parseInt(fields[4]));
+			dayOfWeek = DayOfWeek.of(Integer.parseInt(fields[1]));
 			break;
 		case MONTHLY:
-			dayOfMonth = DayNumber.of(Integer.parseInt(fields[4]));
+			dayOfMonth = DayNumber.of(Integer.parseInt(fields[1]));
 			break;
 		case YEARLY:
-			dayMonthOfYear = MonthDay.parse(fields[4]);
+			dayMonthOfYear = MonthDay.parse(fields[1]);
 			break;
 		}
+
+		this.startDate = startDate;
+		this.endDate = endDate;
 	}
 
 	private void updateSelf(FrequencyType frequencyType, TemporalAccessor temporal, LocalDate startDate,
@@ -157,7 +151,7 @@ public class Recurrence {
 		this.endDate = endDate;
 		this.currDate = currDate;
 	}
-	
+
 	public String getFrequency() {
 		return frequencyType.getName();
 	}
@@ -337,14 +331,7 @@ public class Recurrence {
 	 * @return
 	 */
 	public String convertToString() {
-		StringBuilder genericConversionString = new StringBuilder().append(frequencyType.getID())
-			.append(";")
-			.append(startDate == null ? "" : startDate.toString())
-			.append(";")
-			.append(endDate == null ? "" : endDate.toString())
-			.append(";")
-			.append(currDate == null ? "" : currDate.toString())
-			.append(";");
+		StringBuilder genericConversionString = new StringBuilder().append(frequencyType.getID()).append(";");
 
 		switch (frequency) {
 		case WEEKLY:

@@ -137,7 +137,7 @@ public class WeeklyTest {
 		Recurrence r = new Recurrence(FrequencyType.WEEKLY, DayOfWeek.of(1), null, null, null);
 		String textToDatabase = r.convertToString();
 
-		Recurrence r2 = new Recurrence(textToDatabase);
+		Recurrence r2 = new Recurrence(textToDatabase, null, null);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 9)), LocalDate.of(2023, 4, 10));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 17));
 	}
