@@ -22,6 +22,9 @@ public class MainBill {
 		bi.setPayeeAccount(payerName);
 		bi.setPayerAccount(payeeName);
 
+		bi.setEndDate(bi.getEndDate().plusDays(1));
+		bi.setStartDate(bi.getStartDate().minusDays(1));
+
 		boolean isSuccess = updateBill(bi);
 
 		if (isSuccess) {
