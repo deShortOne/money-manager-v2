@@ -19,8 +19,16 @@ public class DataHandler {
 			.append("	Amount, ")
 			.append("	Frequency, ")
 			.append("	PaymentID, ")
-			.append("	CategoryID ")
+			.append("	CategoryID, ")
+			.append("	transactions.DatePaid ")
 			.append("FROM bills ")
+			.append("LEFT JOIN ( ")
+			.append("	SELECT BillID, ")
+			.append("	MAX(DatePaid) AS DatePaid ")
+			.append("	FROM transactions ")
+			.append("	GROUP BY (BillID) ")
+			.append(") transactions ")
+			.append("on bills.id = transactions.BillID ")
 			.toString();
 
 		ArrayList<BillInfo> output = new ArrayList<>();
@@ -75,9 +83,17 @@ public class DataHandler {
 			.append("	PayeeAccount, ")
 			.append("	Amount, ")
 			.append("	Frequency, ")
+			.append("	transactions.DatePaid, ")
 			.append("	PaymentID, ")
 			.append("	CategoryID ")
 			.append("FROM bills ")
+			.append("LEFT JOIN ( ")
+			.append("	SELECT BillID, ")
+			.append("	MAX(DatePaid) AS DatePaid ")
+			.append("	FROM transactions ")
+			.append("	GROUP BY (BillID) ")
+			.append(") transactions ")
+			.append("on bills.id = transactions.BillID ")
 			.append("WHERE ID = %d")
 			.toString();
 

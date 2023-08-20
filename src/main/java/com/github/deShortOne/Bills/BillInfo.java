@@ -2,6 +2,7 @@ package com.github.deShortOne.Bills;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import com.github.deShortOne.Engine.Account;
 import com.github.deShortOne.Engine.Category;
@@ -14,22 +15,14 @@ public class BillInfo {
 	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s";
 
 	public static final String headers = String.format(stringFormat, "ID", "Payer", "Payee", "Amount", "Frequency",
-			"Category", "Payment Method");
+			"Last Paid", "Category", "Payment Method");
 
 	private final int ID;
 	private Account payer;
 	private Account payee;
 	private double amount;
 	private Recurrence frequency;
-	
-	public Recurrence getFrequency() {
-		return frequency;
-	}
-
-	public void setFrequency(Recurrence frequency) {
-		this.frequency = frequency;
-	}
-
+	private LocalDate lastPaid;
 	private Category category;
 	private Payment paymentMethod;
 
@@ -39,6 +32,7 @@ public class BillInfo {
 		this.payee = MoneyManager.getAccount(bill.getInt("PayeeAccount"));
 		this.amount = bill.getDouble("Amount");
 		this.frequency = new Recurrence(bill.getString("Frequency"));
+		this.lastPaid = bill.getDate("DatePaid") == null ? null : bill.getDate("DatePaid").toLocalDate();
 		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
 		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
 	}
@@ -83,6 +77,22 @@ public class BillInfo {
 		this.paymentMethod = paymentMethod;
 	}
 
+	public Recurrence getFrequency() {
+		return frequency;
+	}
+
+	public void setFrequency(Recurrence frequency) {
+		this.frequency = frequency;
+	}
+
+	public LocalDate getLastPaid() {
+		return lastPaid;
+	}
+
+	public void setLastPaid(LocalDate lastPaid) {
+		this.lastPaid = lastPaid;
+	}
+
 	public int getID() {
 		return ID;
 	}
@@ -90,7 +100,7 @@ public class BillInfo {
 	@Override
 	public String toString() {
 		return String.format(stringFormat, ID, payer.getAccountName(), payee.getAccountName(), amount,
-				frequency.getFrequency(), category.getName(), paymentMethod.getName());
+				frequency.getFrequency(), lastPaid, category.getName(), paymentMethod.getName());
 
 	}
 }

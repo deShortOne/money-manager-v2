@@ -46,10 +46,11 @@ INSERT INTO bills (PayerAccount, PayeeAccount, Amount, PaymentID, CategoryID, Fr
 CREATE TABLE transactions (
 	ID INT AUTO_INCREMENT,
 	BillID INT,
-	DatePayed DATE,
-	AmountPayed double,
+	DatePaid DATE,
+	AmountPaid double,
 	PaymentID INT,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(BillID) REFERENCES bills(ID),
 	FOREIGN KEY(PaymentID) REFERENCES payment_methods(ID)
 );
+INSERT INTO transactions (BillID, DatePaid, AmountPaid, PaymentID) VALUES (1, str_to_date('2023-05-10', '%Y-%m-%d/'), 11, 1), (1, str_to_date('2023-05-11', '%Y-%m-%d/'), 9, 1), (1, str_to_date('2023-05-12', '%Y-%m-%d/'), 10, 1), (2, str_to_date('2023-03-17', '%Y-%m-%d/'), 20, 1);
