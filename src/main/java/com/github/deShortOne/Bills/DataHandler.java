@@ -20,15 +20,8 @@ public class DataHandler {
 			.append("	Frequency, ")
 			.append("	PaymentID, ")
 			.append("	CategoryID, ")
-			.append("	transactions.DatePaid ")
+			.append("	LastPaid ")
 			.append("FROM bills ")
-			.append("LEFT JOIN ( ")
-			.append("	SELECT BillID, ")
-			.append("	MAX(DatePaid) AS DatePaid ")
-			.append("	FROM transactions ")
-			.append("	GROUP BY (BillID) ")
-			.append(") transactions ")
-			.append("on bills.id = transactions.BillID ")
 			.toString();
 
 		ArrayList<BillInfo> output = new ArrayList<>();
@@ -51,7 +44,8 @@ public class DataHandler {
 			.append("Amount = %f, ")
 			.append("Frequency = '%s', ")
 			.append("PaymentID = %d, ")
-			.append("CategoryID = %d ")
+			.append("CategoryID = %d, ")
+			.append("LastPaid = str_to_date('%s', '%%Y-%%m-%%d') ")
 			.append("WHERE ID = %d;")
 			.toString();
 
@@ -60,7 +54,7 @@ public class DataHandler {
 			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerAccount().getId(),
 					updatedBill.getPayeeAccount().getId(), updatedBill.getAmount(),
 					updatedBill.getFrequency().convertToString(), updatedBill.getPaymentMethod().getId(),
-					updatedBill.getCategory().getId(), updatedBill.getID()));
+					updatedBill.getCategory().getId(), updatedBill.getLastPaid(), updatedBill.getID()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -83,17 +77,10 @@ public class DataHandler {
 			.append("	PayeeAccount, ")
 			.append("	Amount, ")
 			.append("	Frequency, ")
-			.append("	transactions.DatePaid, ")
 			.append("	PaymentID, ")
-			.append("	CategoryID ")
+			.append("	CategoryID, ")
+			.append("	LastPaid ")
 			.append("FROM bills ")
-			.append("LEFT JOIN ( ")
-			.append("	SELECT BillID, ")
-			.append("	MAX(DatePaid) AS DatePaid ")
-			.append("	FROM transactions ")
-			.append("	GROUP BY (BillID) ")
-			.append(") transactions ")
-			.append("on bills.id = transactions.BillID ")
 			.append("WHERE ID = %d")
 			.toString();
 

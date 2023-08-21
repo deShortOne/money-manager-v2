@@ -35,19 +35,20 @@ CREATE TABLE bills (
 	Frequency VARCHAR(50),
 	PaymentID INT,
 	CategoryID INT,
+	LastPaid DATE,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(PayerAccount) REFERENCES accounts(ID),
 	FOREIGN KEY(PayeeAccount) REFERENCES accounts(ID),
 	FOREIGN KEY(PaymentID) REFERENCES payment_methods(ID),
 	FOREIGN KEY(CategoryID) REFERENCES categories(ID)
 );
-INSERT INTO bills (PayerAccount, PayeeAccount, Amount, PaymentID, CategoryID, Frequency) VALUES 
-(1, 2, 10, 1, 1, '1;2023-04-10;;2027-04-10;;EOF'), 
-(1, 2, 20, 1, 1, '1;2023-04-10;;2027-04-10;;EOF'), 
-(1, 2, 30, 1, 1, '1;2023-04-10;;2027-04-10;;EOF'), 
-(1, 2, 40, 1, 1, '1;2023-04-10;;2027-04-10;;EOF'), 
-(1, 2, 50, 1, 1, '1;2023-04-10;;2027-04-10;;EOF'), 
-(1, 2, 60, 1, 1, '1;2023-04-10;;2027-04-10;;EOF');
+INSERT INTO bills (PayerAccount, PayeeAccount, Amount, PaymentID, CategoryID, Frequency, LastPaid) VALUES 
+(1, 2, 10, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
+(1, 2, 20, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
+(1, 2, 30, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
+(1, 2, 40, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
+(1, 2, 50, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
+(1, 2, 60, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', null);
 
 CREATE TABLE transactions (
 	ID INT AUTO_INCREMENT,

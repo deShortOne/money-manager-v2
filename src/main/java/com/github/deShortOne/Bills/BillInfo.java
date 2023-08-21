@@ -32,7 +32,7 @@ public class BillInfo {
 		this.payee = MoneyManager.getAccount(bill.getInt("PayeeAccount"));
 		this.amount = bill.getDouble("Amount");
 		this.frequency = new Recurrence(bill.getString("Frequency"));
-		this.lastPaid = bill.getDate("DatePaid") == null ? null : bill.getDate("DatePaid").toLocalDate();
+		this.lastPaid = bill.getDate("LastPaid") == null ? null : bill.getDate("LastPaid").toLocalDate();
 		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
 		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
 	}
