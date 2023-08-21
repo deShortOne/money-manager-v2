@@ -46,16 +46,23 @@ public class DataHandler {
 			.append("Frequency = '%s', ")
 			.append("PaymentID = %d, ")
 			.append("CategoryID = %d, ")
-			.append("LastPaid = str_to_date('%s', '%%Y-%%m-%%d') ")
+			.append("LastPaid = %s ")
 			.append("WHERE ID = %d;")
 			.toString();
 
 		boolean isSuccess;
 		try {
+			String lastPaidValue;
+			if (updatedBill.getLastPaid() == null) {
+				lastPaidValue = null;
+			} else {
+				lastPaidValue = String.format("str_to_date('%s', '%%Y-%%m-%%d')", updatedBill.getLastPaid());
+			}
+			
 			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerAccount().getId(),
 					updatedBill.getPayeeAccount().getId(), updatedBill.getAmount(),
 					updatedBill.getFrequency().convertToString(), updatedBill.getPaymentMethod().getId(),
-					updatedBill.getCategory().getId(), updatedBill.getLastPaid(), updatedBill.getID()));
+					updatedBill.getCategory().getId(), lastPaidValue, updatedBill.getID()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();

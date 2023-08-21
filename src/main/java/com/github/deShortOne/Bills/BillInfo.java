@@ -11,8 +11,6 @@ import com.github.deShortOne.Engine.Payment;
 import com.github.deShortOne.Recurrence.Recurrence;
 
 public class BillInfo {
-
-	private static int a = 0;
 	
 	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s%20s";
 
@@ -44,14 +42,13 @@ public class BillInfo {
 		boolean success = DataHandler.addTransaction(this, datePaid, amountPaid, paymentMethod);
 		
 		if (success) {
-			iterateDueDate();
 			this.lastPaid = datePaid;
-			DataHandler.updateBill(this);
+			iterateDueDate();
 		}
 	}
 	
 	/**
-	 * Moves due date to next date. Can also be used to skip.
+	 * Moves due date to next date. Can also be used to skip. Updates database.
 	 */
 	public void iterateDueDate() {
 		frequency.updateDueDate();
@@ -131,14 +128,15 @@ public class BillInfo {
 	}
 
 	public LocalDate getDueDate() {
-		return frequency.getNextDueDate();
+		return frequency.getDueDate();
 	}
 
 	public int getID() {
 		return ID;
 	}
 
-	public String aatoString() {
+	@Override
+	public String toString() {
 		return String.format(stringFormat, ID, payer.getAccountName(), payee.getAccountName(), amount,
 				frequency.getFrequency(), getLastPaid(), getDueDate(), category.getName(), paymentMethod.getName());
 

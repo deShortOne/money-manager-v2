@@ -16,7 +16,8 @@ public class MainBill {
 	
 	public static void main(String[] args) {
 		MoneyManager.getAccount(2).getId(); // !! MUST ENSURE MONEYMANAGER ALREADY INITALISED
-		BillInfo bi = getBills();
+		getBills();
+		BillInfo bi = bills.get(0);
 		bi.setAmount(-5);
 
 		Account payerName = bi.getPayerAccount();
@@ -54,19 +55,28 @@ public class MainBill {
 		System.out.println("Transactions done");
 		bi.doTransaction(20, MoneyManager.getPayment(1));
 		printBills(); // or getBills() to confirm that it's in the db
+		
+		System.out.println("Transactions done for null last paid");
+		bills.get(5).doTransaction(50, MoneyManager.getPayment(2));
+		printBills(); // or getBills() to confirm that it's in the db
+		
+		System.out.println("Skip a few due dates");
+		for (int i = 0; i < 3; i++) {
+			bills.get(5).iterateDueDate(); // skip due dates
+		}
+		printBills();
 	}
 
-	public static BillInfo getBills() {
+	public static void getBills() {
 		bills = DataHandler.getBills();
-		return printBills();
+		printBills();
 	}
 	
-	public static BillInfo printBills() {
+	public static void printBills() {
 		System.out.println(BillInfo.headers);
 		for (BillInfo bi : bills) {
-			System.out.println(bi.aatoString());
+			System.out.println(bi);
 		}
-		return bills.get(0);
 	}
 
 	public static boolean updateBill(BillInfo updatedBill) {
