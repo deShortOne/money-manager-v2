@@ -25,17 +25,13 @@ public class BillInfo {
 	private LocalDate lastPaid;
 	private Category category;
 	private Payment paymentMethod;
-	private LocalDate startDate;
-	private LocalDate endDate;
 
 	public BillInfo(ResultSet bill) throws SQLException {
 		this.ID = bill.getInt("ID");
 		this.payer = MoneyManager.getAccount(bill.getInt("PayerAccount"));
 		this.payee = MoneyManager.getAccount(bill.getInt("PayeeAccount"));
 		this.amount = bill.getDouble("Amount");
-		this.startDate = bill.getDate("StartDate") == null ? null : bill.getDate("StartDate").toLocalDate();
-		this.endDate = bill.getDate("EndDate") == null ? null : bill.getDate("EndDate").toLocalDate();
-		this.frequency = new Recurrence(bill.getString("Frequency"), startDate, endDate);
+		this.frequency = new Recurrence(bill.getString("Frequency"));
 		this.lastPaid = bill.getDate("DatePaid") == null ? null : bill.getDate("DatePaid").toLocalDate();
 		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
 		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
@@ -96,37 +92,25 @@ public class BillInfo {
 	public void setLastPaid(LocalDate lastPaid) {
 		this.lastPaid = lastPaid;
 	}
-	
+
 	public LocalDate getStartDate() {
-		return startDate;
+		return frequency.getStartDate();
 	}
 
 	public void setStartDate(LocalDate startDate) {
 		frequency.setStartDate(startDate);
-		this.startDate = startDate;
 	}
 
 	public LocalDate getEndDate() {
-		return endDate;
+		return frequency.getEndDate();
 	}
 
 	public void setEndDate(LocalDate endDate) {
 		frequency.setEndDate(endDate);
-		this.endDate = endDate;
 	}
 
 	public LocalDate getDueDate() {
-		LocalDate dateToProcess;
-		if (lastPaid != null) {
-			dateToProcess = lastPaid;
-		} else if (frequency.getCurrDate() != null) {
-			dateToProcess = frequency.getCurrDate();
-		} else if (frequency.getStartDate() != null) {
-			dateToProcess = frequency.getStartDate();
-		} else {
-			dateToProcess = LocalDate.now();
-		}
-		return frequency.getNextDate(dateToProcess);
+		return frequency.getNextDueDate();
 	}
 
 	public int getID() {

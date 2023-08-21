@@ -44,7 +44,7 @@ public class Recurrence {
 	private MonthDay dayMonthOfYear = null;
 
 	/**
-	 * Optional, set the date for the first occurrence.
+	 * Mandatory. Set the date for the first occurrence.
 	 */
 	private LocalDate startDate = null;
 
@@ -54,9 +54,9 @@ public class Recurrence {
 	private LocalDate endDate = null;
 
 	/**
-	 * Options, date this frequency is at currently.
+	 * Mandatory, but can be null. The next date that occurs in this frequency.
 	 */
-	private LocalDate currDate = null;
+	private LocalDate dueDate = null;
 
 	/**
 	 * Creates a recurrence object.
@@ -64,16 +64,21 @@ public class Recurrence {
 	 * @param frequencyType
 	 * @param temporal      must be {@code DayOfWeek}, {@code DayNumber} or
 	 *                      {@code MonthDay}
-	 * @throws NullPointerException             if either frequencyType is null or
-	 *                                          temporal is null and frequencyType
-	 *                                          frequency is not ONE_TIME or DAILY
+	 * @throws NullPointerException             if either frequencyType is null
+	 * 
+	 * @throws NullPointerException             if temporal is null and
+	 *                                          frequencyType frequency is not
+	 *                                          ONE_TIME or DAILY
+	 * @throws NullPointerException             if startDate or dueDate is null
 	 * @throws UnsupportedTemporalTypeException if temporal is not
 	 *                                          {@code DayOfWeek}, {@code DayNumber}
 	 *                                          or {@code MonthDay}
 	 */
 	public Recurrence(FrequencyType frequencyType, TemporalAccessor temporal, LocalDate startDate, LocalDate endDate,
-			LocalDate currDate) {
-		updateSelf(frequencyType, temporal, startDate, endDate, currDate);
+			LocalDate dueDate) {
+		if (dueDate == null)
+			throw new NullPointerException("Due date cannot be null");
+		updateSelf(frequencyType, temporal, startDate, endDate, dueDate);
 	}
 
 	/**
@@ -81,33 +86,38 @@ public class Recurrence {
 	 * 
 	 * @param text
 	 */
-	public Recurrence(String text, LocalDate startDate, LocalDate endDate) {
+	public Recurrence(String text) {
 		String[] fields = text.split(";");
 		frequencyType = FrequencyType.of(Integer.parseInt(fields[0]));
 		frequency = frequencyType.getFrequency();
 		skips = frequencyType.getSkips();
+
+		startDate = LocalDate.parse(fields[1]);
+		if (fields[2] != "") {
+			endDate = LocalDate.parse(fields[2]);
+		}
+		if (fields[3] != "") {
+			dueDate = LocalDate.parse(fields[3]);
+		}
 
 		switch (frequency) {
 		case ONE_TIME:
 		case DAILY:
 			break;
 		case WEEKLY:
-			dayOfWeek = DayOfWeek.of(Integer.parseInt(fields[1]));
+			dayOfWeek = DayOfWeek.of(Integer.parseInt(fields[4]));
 			break;
 		case MONTHLY:
-			dayOfMonth = DayNumber.of(Integer.parseInt(fields[1]));
+			dayOfMonth = DayNumber.of(Integer.parseInt(fields[4]));
 			break;
 		case YEARLY:
-			dayMonthOfYear = MonthDay.parse(fields[1]);
+			dayMonthOfYear = MonthDay.parse(fields[4]);
 			break;
 		}
-
-		this.startDate = startDate;
-		this.endDate = endDate;
 	}
 
 	private void updateSelf(FrequencyType frequencyType, TemporalAccessor temporal, LocalDate startDate,
-			LocalDate endDate, LocalDate currDate) {
+			LocalDate endDate, LocalDate dueDate) {
 		resetVariables();
 
 		if (frequencyType == null) {
@@ -117,6 +127,10 @@ public class Recurrence {
 				&& frequencyType.getFrequency() != Frequency.DAILY) {
 			throw new NullPointerException(
 					"Temporal cannot be null unless FrequencyType is Frequency.ONE_TIME or Frequency.DAILY");
+		}
+
+		if (startDate == null) {
+			throw new NullPointerException("Start date cannot be null");
 		}
 
 		this.frequencyType = frequencyType;
@@ -149,25 +163,30 @@ public class Recurrence {
 
 		this.startDate = startDate;
 		this.endDate = endDate;
-		this.currDate = currDate;
+		this.dueDate = dueDate;
 	}
 
 	public String getFrequency() {
 		return frequencyType.getName();
 	}
 
+	public LocalDate getDueDate() {
+		return dueDate;
+	}
+
 	/**
-	 * Gets the next date using current date as date to be evaluated.
+	 * Gets the next due date using due date as date to be evaluated.
 	 * 
 	 * @return next date or null if there is no date after
-	 * @throws NullPointerException if curr date is not set. Either run
-	 *                              setCurrDate(LocalDate currDate) or
-	 *                              getNextDate(LocalDate currDate)
+	 * @throws NullPointerException if due date is not set. Either run
+	 *                              {@code setDueDate(LocalDate nextPayDate)} or
+	 *                              {@code getNextDate(LocalDate nextPayDate)}
 	 */
-	public LocalDate getNextDate() {
-		if (currDate == null)
-			throw new NullPointerException("Curr date cannot be null");
-		return getNextDate(currDate);
+	public LocalDate getNextDueDate() {
+		if (dueDate == null) {
+			throw new NullPointerException("Due date is null");
+		}
+		return getNextDate(dueDate);
 	}
 
 	/**
@@ -177,11 +196,14 @@ public class Recurrence {
 	 * fields will be returned. E.g. If set to weekly on Wednesday and the first day
 	 * is Sunday (1-1-2023), then the returned date will be Wednesday (4-1-2023).
 	 * 
-	 * @param ld date to be evaluated
+	 * @param ld date to be evaluated, not null
 	 * @return next date
-	 * @throw IllegalArgumentException if key parameters are missing
+	 * @throw NullPointerException if ld is null
 	 */
 	public LocalDate getNextDate(LocalDate ld) {
+		if (ld == null) {
+			throw new NullPointerException("ld cannot be null");
+		}
 		if (startDate != null && ld.isBefore(startDate)) {
 			switch (frequency) {
 			case WEEKLY:
@@ -271,15 +293,13 @@ public class Recurrence {
 	}
 
 	/**
-	 * Set the end date.
+	 * Sets the end date. Null end date means the frequency will never stop.
 	 * 
 	 * @param endDate date of the last event
 	 * @return true if end date is after start date else false
 	 */
 	public void setEndDate(LocalDate endDate) {
-		if (endDate == null) {
-			throw new NullPointerException("End date cannot be null");
-		} else if (startDate != null && startDate.isAfter(endDate)) {
+		if (startDate != null && startDate.isAfter(endDate)) {
 			throw new DateTimeException("End date cannot be before start date - " + startDate.toString());
 		}
 		this.endDate = endDate;
@@ -297,41 +317,40 @@ public class Recurrence {
 	/**
 	 * Set the current date.
 	 * 
-	 * @param currDate date to set as current
+	 * @param dueDate date to set as due date
 	 */
-	public void setCurrDate(LocalDate currDate) {
-		this.currDate = currDate;
+	public void setDueDate(LocalDate dueDate) {
+		this.dueDate = dueDate;
 	}
 
 	/**
-	 * Sets the current date to next if current date is not null.
+	 * Sets the due date to next. Returns null if due date is has passed end date.
 	 * 
 	 * @return the next date/ currently set date
 	 */
-	public LocalDate setCurrDate() {
-		if (this.currDate == null)
-			throw new NullPointerException("Current date has not yet been set");
-		this.currDate = getNextDate(this.currDate);
-		return this.currDate;
+	public LocalDate updateDueDate() {
+		if (dueDate == null)
+			return null;
+		dueDate = getNextDate(dueDate);
+		return dueDate;
 	}
 
 	/**
-	 * Gets the current date.
-	 * 
-	 * @return current date
-	 */
-	public LocalDate getCurrDate() {
-		return this.currDate;
-	}
-
-	/**
-	 * Each part is split by semi-colon. FrequencyTypeID;StartDate;EndDate;CurrDate;
-	 * The rest of the string is frequency specific
+	 * Each part is split by semi-colon.
+	 * FrequencyTypeID;StartDate;EndDate;NextPayDate; The rest of the string is
+	 * frequency specific
 	 * 
 	 * @return
 	 */
 	public String convertToString() {
-		StringBuilder genericConversionString = new StringBuilder().append(frequencyType.getID()).append(";");
+		StringBuilder genericConversionString = new StringBuilder().append(frequencyType.getID())
+			.append(";")
+			.append(startDate == null ? "" : startDate.toString())
+			.append(";")
+			.append(endDate == null ? "" : endDate.toString())
+			.append(";")
+			.append(dueDate == null ? "" : dueDate.toString())
+			.append(";");
 
 		switch (frequency) {
 		case WEEKLY:
@@ -351,8 +370,8 @@ public class Recurrence {
 	}
 
 	public void updateRecurrence(FrequencyType frequencyType, TemporalAccessor temporal, LocalDate startDate,
-			LocalDate endDate, LocalDate currDate) {
-		updateSelf(frequencyType, temporal, startDate, endDate, currDate);
+			LocalDate endDate, LocalDate nextPayDate) {
+		updateSelf(frequencyType, temporal, startDate, endDate, nextPayDate);
 	}
 
 	private void resetVariables() {

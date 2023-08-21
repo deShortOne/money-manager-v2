@@ -22,7 +22,6 @@ public class MainBill {
 		bi.setPayeeAccount(payerName);
 		bi.setPayerAccount(payeeName);
 
-		bi.setEndDate(bi.getEndDate().plusDays(1));
 		bi.setStartDate(bi.getStartDate().minusDays(1));
 
 		boolean isSuccess = updateBill(bi);
@@ -36,8 +35,9 @@ public class MainBill {
 		getBills();
 
 		BillInfo biNew = addNewBill(MoneyManager.getAccount(2), MoneyManager.getAccount(1), -10,
-				new Recurrence(FrequencyType.DAILY, null, null, null, null), MoneyManager.getCategory(1),
-				MoneyManager.getPayment(1), LocalDate.of(2023, 1, 10), LocalDate.of(2027, 1, 10));
+				new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2020, 1, 1), null, LocalDate.of(2024, 2, 2)),
+				MoneyManager.getCategory(1), MoneyManager.getPayment(1), LocalDate.of(2023, 1, 10),
+				LocalDate.of(2027, 1, 10));
 		if (biNew == null) {
 			System.out.println("Insert failed");
 		} else {
@@ -64,7 +64,6 @@ public class MainBill {
 
 	public static BillInfo addNewBill(Account payerAccount, Account payeeAccount, double amount, Recurrence frequency,
 			Category category, Payment payment, LocalDate startDate, LocalDate endDate) {
-		return DataHandler.addNewBill(payerAccount, payeeAccount, amount, frequency, category, payment, startDate,
-				endDate);
+		return DataHandler.addNewBill(payerAccount, payeeAccount, amount, frequency, category, payment);
 	}
 }

@@ -18,7 +18,7 @@ public class DailyTest {
 
 	@BeforeEach
 	public void startEach() {
-		rec = new Recurrence(FrequencyType.DAILY, null, null, null, null);
+		rec = new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2023, 1, 15), null, LocalDate.of(2023, 1, 16));
 	}
 
 	@Test
@@ -41,6 +41,7 @@ public class DailyTest {
 		LocalDate endDate = LocalDate.of(2023, 1, 10);
 		assertTrue(endDate.isBefore(currDate));
 
+		rec.setStartDate(LocalDate.of(2020, 1, 10));
 		rec.setEndDate(endDate);
 		assertEquals(rec.getNextDate(currDate), null);
 	}
@@ -48,6 +49,7 @@ public class DailyTest {
 	@Test
 	public void currDateOnEndDate() {
 		LocalDate endDate = LocalDate.of(2023, 1, 10);
+		rec.setStartDate(LocalDate.of(2020, 1, 10));
 		rec.setEndDate(endDate);
 		assertEquals(rec.getNextDate(endDate), null);
 	}
@@ -59,27 +61,27 @@ public class DailyTest {
 
 	@Test
 	public void useCurrDate() {
-		rec.setCurrDate(currDate);
-		assertEquals(rec.getNextDate(), nextDate);
+		rec.setDueDate(currDate);
+		assertEquals(rec.getNextDueDate(), nextDate);
 
-		assertEquals(rec.setCurrDate(), nextDate);
-		assertEquals(rec.setCurrDate(), nextDate.plusDays(1));
-		assertEquals(rec.setCurrDate(), nextDate.plusDays(2));
-		assertEquals(rec.setCurrDate(), nextDate.plusDays(3));
-		assertEquals(rec.setCurrDate(), nextDate.plusDays(4));
+		assertEquals(rec.updateDueDate(), nextDate);
+		assertEquals(rec.updateDueDate(), nextDate.plusDays(1));
+		assertEquals(rec.updateDueDate(), nextDate.plusDays(2));
+		assertEquals(rec.updateDueDate(), nextDate.plusDays(3));
+		assertEquals(rec.updateDueDate(), nextDate.plusDays(4));
 	}
 
-	@Test
 	public void invalidUse() {
-		assertThrows(NullPointerException.class, () -> rec.setCurrDate());
+		assertThrows(NullPointerException.class, () -> rec.updateDueDate());
 	}
 
 	@Test
 	public void stringConversion() {
-		Recurrence r = new Recurrence(FrequencyType.DAILY, null, null, null, null);
+		Recurrence r = new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2023, 4, 10), null,
+				LocalDate.of(2023, 4, 10));
 		String textToDatabase = r.convertToString();
-
-		Recurrence r2 = new Recurrence(textToDatabase, null, null);
+		System.out.println(textToDatabase);
+		Recurrence r2 = new Recurrence(textToDatabase);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 11));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 15)), LocalDate.of(2023, 4, 16));
 	}

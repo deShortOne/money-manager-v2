@@ -16,8 +16,9 @@ public enum FrequencyType {
 	private final String name;
 	private final Frequency frequency;
 	private final int skips;
-	
-	// don't use ordinal because I want to keep order of enums and new/ more enums should be
+
+	// don't use ordinal because I want to keep order of enums and new/ more enums
+	// should be
 	// placed in the correct order.
 	private final int id;
 
@@ -39,11 +40,11 @@ public enum FrequencyType {
 	public int getSkips() {
 		return skips;
 	}
-	
+
 	public int getID() {
 		return id;
 	}
-	
+
 	public static FrequencyType of(int pos) {
 		return FrequencyType.values()[pos];
 	}

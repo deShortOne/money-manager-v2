@@ -16,9 +16,7 @@ public class SQLExecutor {
 	static {
 		try {
 			Class.forName("com.mysql.cj.jdbc.Driver");
-			connect = DriverManager
-					.getConnection("jdbc:mysql://localhost/money?"
-							+ "user=root&password=pass"); 
+			connect = DriverManager.getConnection("jdbc:mysql://localhost/money?" + "user=root&password=pass");
 			// need more secure login
 			statement = connect.createStatement();
 		} catch (ClassNotFoundException | SQLException e) {
@@ -37,9 +35,10 @@ public class SQLExecutor {
 	public static ResultSet getTable(String sqlQuery) throws SQLException {
 		return statement.executeQuery(sqlQuery);
 	}
-	
+
 	/**
 	 * INSERT UPDATE OR DELETE ONLY
+	 * 
 	 * @param sqlQuery
 	 * @throws SQLException
 	 */

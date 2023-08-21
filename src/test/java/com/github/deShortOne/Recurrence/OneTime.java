@@ -11,7 +11,7 @@ public class OneTime {
 	private LocalDate currDate = LocalDate.of(2023, 1, 15);
 	private LocalDate startDate = LocalDate.of(2023, 1, 20);
 
-	private Recurrence rec = new Recurrence(FrequencyType.ONCE, null, startDate, null, null);
+	private Recurrence rec = new Recurrence(FrequencyType.ONCE, null, startDate, null, currDate);
 
 	@Test
 	public void currDateBeforeDate() {
@@ -27,13 +27,13 @@ public class OneTime {
 	public void currDateAfterDate() {
 		assertEquals(rec.getNextDate(startDate.plusDays(1)), null);
 	}
-	
+
 	@Test
 	public void stringConversion() {
-		Recurrence r = new Recurrence(FrequencyType.ONCE, null, startDate, null, null);
+		Recurrence r = new Recurrence(FrequencyType.ONCE, null, startDate, null, currDate);
 		String textToDatabase = r.convertToString();
 
-		Recurrence r2 = new Recurrence(textToDatabase, null, null);
+		Recurrence r2 = new Recurrence(textToDatabase);
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 1, 15)), LocalDate.of(2023, 1, 20));
 		assertEquals(r2.getNextDate(LocalDate.of(2023, 1, 20)), null);
 	}

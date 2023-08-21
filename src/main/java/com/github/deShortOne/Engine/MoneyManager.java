@@ -11,13 +11,13 @@ public class MoneyManager {
 	static {
 		refreshTables();
 	}
-	
+
 	public static void refreshTables() {
 		accounts = DataHandler.getAccounts();
 		categories = DataHandler.getCategories();
 		paymentMethods = DataHandler.getPaymentMethods();
 	}
-	
+
 	public static Account getAccount(int id) {
 		return accounts.get(id);
 	}

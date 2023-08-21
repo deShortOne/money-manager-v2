@@ -9,7 +9,7 @@ public class Account {
 	private String accountName;
 	private String sortCode;
 	private String accountNumber;
-	
+
 	public Account(ResultSet account) throws SQLException {
 		this.id = account.getInt("ID");
 		this.accountName = account.getString("AccountName");
