@@ -58,7 +58,7 @@ public class DataHandler {
 			} else {
 				lastPaidValue = String.format("str_to_date('%s', '%%Y-%%m-%%d')", updatedBill.getLastPaid());
 			}
-			
+
 			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerAccount().getId(),
 					updatedBill.getPayeeAccount().getId(), updatedBill.getAmount(),
 					updatedBill.getFrequency().convertToString(), updatedBill.getPaymentMethod().getId(),
@@ -116,23 +116,25 @@ public class DataHandler {
 		}
 		return bi;
 	}
-	
-	public static boolean addTransaction(BillInfo bi, LocalDate datePaid, double amountPaid, Payment paymentID) {
+
+	public static boolean addTransaction(BillInfo bi, LocalDate datePaid, double amountPaid, Category category,
+			Payment paymentID) {
 		String addTransaction = new StringBuilder().append("INSERT INTO transactions ")
-				.append("(BillID, DatePaid, AmountPaid, PaymentID)")
-				.append("VALUES")
-				.append("(%d, str_to_date('%s', '%%Y-%%m-%%d'), %f, %d);")
-				.toString();
-		
+			.append("(BillID, DatePaid, AmountPaid, CategoryID, PaymentID)")
+			.append("VALUES")
+			.append("(%d, str_to_date('%s', '%%Y-%%m-%%d'), %f, %d, %d);")
+			.toString();
+
 		boolean isSuccess;
 		try {
-			SQLExecutor.changeTable(String.format(addTransaction, bi.getID(), datePaid, amountPaid, paymentID.getId()));
+			SQLExecutor.changeTable(String.format(addTransaction, bi.getID(), datePaid, amountPaid, category.getId(),
+					paymentID.getId()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
 			isSuccess = false;
 		}
-		
+
 		return isSuccess;
 	}
 }

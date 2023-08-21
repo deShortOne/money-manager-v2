@@ -11,7 +11,7 @@ import com.github.deShortOne.Engine.Payment;
 import com.github.deShortOne.Recurrence.Recurrence;
 
 public class BillInfo {
-	
+
 	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s%20s";
 
 	public static final String headers = String.format(stringFormat, "ID", "Payer", "Payee", "Amount", "Frequency",
@@ -36,17 +36,17 @@ public class BillInfo {
 		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
 		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
 	}
-	
-	public void doTransaction(double amountPaid, Payment paymentMethod) {
+
+	public void doTransaction(double amountPaid, Category category, Payment paymentMethod) {
 		LocalDate datePaid = frequency.getDueDate(); // date should be set to today
-		boolean success = DataHandler.addTransaction(this, datePaid, amountPaid, paymentMethod);
-		
+		boolean success = DataHandler.addTransaction(this, datePaid, amountPaid, category, paymentMethod);
+
 		if (success) {
 			this.lastPaid = datePaid;
 			iterateDueDate();
 		}
 	}
-	
+
 	/**
 	 * Moves due date to next date. Can also be used to skip. Updates database.
 	 */

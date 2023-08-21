@@ -13,7 +13,7 @@ import com.github.deShortOne.Recurrence.Recurrence;
 public class MainBill {
 
 	static ArrayList<BillInfo> bills;
-	
+
 	public static void main(String[] args) {
 		MoneyManager.getAccount(2).getId(); // !! MUST ENSURE MONEYMANAGER ALREADY INITALISED
 		getBills();
@@ -51,15 +51,15 @@ public class MainBill {
 			System.out.println("All");
 			getBills();
 		}
-		
+
 		System.out.println("Transactions done");
-		bi.doTransaction(20, MoneyManager.getPayment(1));
+		bi.doTransaction(20, MoneyManager.getCategory(10), MoneyManager.getPayment(1));
 		printBills(); // or getBills() to confirm that it's in the db
-		
+
 		System.out.println("Transactions done for null last paid");
-		bills.get(5).doTransaction(50, MoneyManager.getPayment(2));
+		bills.get(5).doTransaction(50, MoneyManager.getCategory(11), MoneyManager.getPayment(2));
 		printBills(); // or getBills() to confirm that it's in the db
-		
+
 		System.out.println("Skip a few due dates");
 		for (int i = 0; i < 3; i++) {
 			bills.get(5).iterateDueDate(); // skip due dates
@@ -71,7 +71,7 @@ public class MainBill {
 		bills = DataHandler.getBills();
 		printBills();
 	}
-	
+
 	public static void printBills() {
 		System.out.println(BillInfo.headers);
 		for (BillInfo bi : bills) {
