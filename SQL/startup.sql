@@ -43,11 +43,11 @@ CREATE TABLE bills (
 	FOREIGN KEY(CategoryID) REFERENCES categories(ID)
 );
 INSERT INTO bills (PayerAccount, PayeeAccount, Amount, PaymentID, CategoryID, Frequency, LastPaid) VALUES 
-(1, 2, 10, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
-(1, 2, 20, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
-(1, 2, 30, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
-(1, 2, 40, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
-(1, 2, 50, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
+(1, 2, 10, 1, 1, '1;2023-04-10;;2023-05-11;;EOF', str_to_date('2023-05-10', '%Y-%m-%d')), 
+(1, 2, 20, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-11', '%Y-%m-%d')), 
+(1, 2, 30, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-12', '%Y-%m-%d')), 
+(1, 2, 40, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-13', '%Y-%m-%d')), 
+(1, 2, 50, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', str_to_date('2023-05-14', '%Y-%m-%d')), 
 (1, 2, 60, 1, 1, '1;2023-04-10;;2027-04-10;;EOF', null);
 
 CREATE TABLE transactions (

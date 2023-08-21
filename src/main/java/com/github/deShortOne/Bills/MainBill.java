@@ -12,6 +12,8 @@ import com.github.deShortOne.Recurrence.Recurrence;
 
 public class MainBill {
 
+	static ArrayList<BillInfo> bills;
+	
 	public static void main(String[] args) {
 		MoneyManager.getAccount(2).getId(); // !! MUST ENSURE MONEYMANAGER ALREADY INITALISED
 		BillInfo bi = getBills();
@@ -40,6 +42,7 @@ public class MainBill {
 				LocalDate.of(2027, 1, 10));
 		if (biNew == null) {
 			System.out.println("Insert failed");
+			return;
 		} else {
 			System.out.println("Insert succeeded");
 			System.out.println(BillInfo.headers);
@@ -47,13 +50,21 @@ public class MainBill {
 			System.out.println("All");
 			getBills();
 		}
+		
+		System.out.println("Transactions done");
+		bi.doTransaction(20, MoneyManager.getPayment(1));
+		printBills(); // or getBills() to confirm that it's in the db
 	}
 
 	public static BillInfo getBills() {
-		ArrayList<BillInfo> bills = DataHandler.getBills();
+		bills = DataHandler.getBills();
+		return printBills();
+	}
+	
+	public static BillInfo printBills() {
 		System.out.println(BillInfo.headers);
 		for (BillInfo bi : bills) {
-			System.out.println(bi);
+			System.out.println(bi.aatoString());
 		}
 		return bills.get(0);
 	}

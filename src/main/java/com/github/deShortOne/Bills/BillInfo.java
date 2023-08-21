@@ -12,6 +12,8 @@ import com.github.deShortOne.Recurrence.Recurrence;
 
 public class BillInfo {
 
+	private static int a = 0;
+	
 	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s%20s";
 
 	public static final String headers = String.format(stringFormat, "ID", "Payer", "Payee", "Amount", "Frequency",
@@ -35,6 +37,25 @@ public class BillInfo {
 		this.lastPaid = bill.getDate("LastPaid") == null ? null : bill.getDate("LastPaid").toLocalDate();
 		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
 		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
+	}
+	
+	public void doTransaction(double amountPaid, Payment paymentMethod) {
+		LocalDate datePaid = frequency.getDueDate(); // date should be set to today
+		boolean success = DataHandler.addTransaction(this, datePaid, amountPaid, paymentMethod);
+		
+		if (success) {
+			iterateDueDate();
+			this.lastPaid = datePaid;
+			DataHandler.updateBill(this);
+		}
+	}
+	
+	/**
+	 * Moves due date to next date. Can also be used to skip.
+	 */
+	public void iterateDueDate() {
+		frequency.updateDueDate();
+		DataHandler.updateBill(this);
 	}
 
 	public Account getPayerAccount() {
@@ -117,10 +138,9 @@ public class BillInfo {
 		return ID;
 	}
 
-	@Override
-	public String toString() {
+	public String aatoString() {
 		return String.format(stringFormat, ID, payer.getAccountName(), payee.getAccountName(), amount,
-				frequency.getFrequency(), lastPaid, getDueDate(), category.getName(), paymentMethod.getName());
+				frequency.getFrequency(), getLastPaid(), getDueDate(), category.getName(), paymentMethod.getName());
 
 	}
 }

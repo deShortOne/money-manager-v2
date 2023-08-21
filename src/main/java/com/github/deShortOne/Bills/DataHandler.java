@@ -2,6 +2,7 @@ package com.github.deShortOne.Bills;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 import com.github.deShortOne.Engine.Account;
@@ -107,5 +108,24 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 		return bi;
+	}
+	
+	public static boolean addTransaction(BillInfo bi, LocalDate datePaid, double amountPaid, Payment paymentID) {
+		String addTransaction = new StringBuilder().append("INSERT INTO transactions ")
+				.append("(BillID, DatePaid, AmountPaid, PaymentID)")
+				.append("VALUES")
+				.append("(%d, str_to_date('%s', '%%Y-%%m-%%d'), %f, %d);")
+				.toString();
+		
+		boolean isSuccess;
+		try {
+			SQLExecutor.changeTable(String.format(addTransaction, bi.getID(), datePaid, amountPaid, paymentID.getId()));
+			isSuccess = true;
+		} catch (SQLException e) {
+			e.printStackTrace();
+			isSuccess = false;
+		}
+		
+		return isSuccess;
 	}
 }
