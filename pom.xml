@@ -29,6 +29,19 @@
 			<artifactId>mysql-connector-java</artifactId>
 			<version>8.0.31</version>
 		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.openjfx/javafx-controls -->
+		<dependency>
+			<groupId>org.openjfx</groupId>
+			<artifactId>javafx-controls</artifactId>
+			<version>20-ea+9</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.testfx/testfx-core -->
+		<dependency>
+		    <groupId>org.testfx</groupId>
+		    <artifactId>testfx-core</artifactId>
+		    <version>4.0.16-alpha</version>
+		    <scope>test</scope>
+		</dependency>
 	</dependencies>
 
 	<build>
