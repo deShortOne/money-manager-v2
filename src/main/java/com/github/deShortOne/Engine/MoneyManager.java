@@ -2,6 +2,9 @@ package com.github.deShortOne.Engine;
 
 import java.util.HashMap;
 
+import com.github.deShortOne.Bills.MainBill;
+import com.github.deShortOne.Budget.MainBudget;
+
 public class MoneyManager {
 
 	private static HashMap<Integer, Account> accounts;
@@ -10,6 +13,11 @@ public class MoneyManager {
 
 	static {
 		refreshTables();
+	}
+
+	public static void main(String[] args) {
+		MainBill.main(null);
+		MainBudget.main(null);
 	}
 
 	public static void refreshTables() {
