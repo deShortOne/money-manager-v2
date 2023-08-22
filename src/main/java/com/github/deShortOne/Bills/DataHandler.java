@@ -5,9 +5,9 @@ import java.sql.SQLException;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.github.deShortOne.Engine.Account;
-import com.github.deShortOne.Engine.Category;
-import com.github.deShortOne.Engine.Payment;
+import com.github.deShortOne.DataObjects.Account;
+import com.github.deShortOne.DataObjects.Category;
+import com.github.deShortOne.DataObjects.Payment;
 import com.github.deShortOne.Recurrence.Recurrence;
 import com.github.deShortOne.SQL.SQLExecutor;
 

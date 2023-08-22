@@ -4,10 +4,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
-import com.github.deShortOne.Engine.Account;
-import com.github.deShortOne.Engine.Category;
-import com.github.deShortOne.Engine.MoneyManager;
-import com.github.deShortOne.Engine.Payment;
+import com.github.deShortOne.DataObjects.Account;
+import com.github.deShortOne.DataObjects.Category;
+import com.github.deShortOne.DataObjects.DataObjects;
+import com.github.deShortOne.DataObjects.Payment;
 import com.github.deShortOne.Recurrence.Recurrence;
 
 public class BillInfo {
@@ -28,13 +28,13 @@ public class BillInfo {
 
 	public BillInfo(ResultSet bill) throws SQLException {
 		this.ID = bill.getInt("ID");
-		this.payer = MoneyManager.getAccount(bill.getInt("PayerAccount"));
-		this.payee = MoneyManager.getAccount(bill.getInt("PayeeAccount"));
+		this.payer = DataObjects.getAccount(bill.getInt("PayerAccount"));
+		this.payee = DataObjects.getAccount(bill.getInt("PayeeAccount"));
 		this.amount = bill.getDouble("Amount");
 		this.frequency = new Recurrence(bill.getString("Frequency"));
 		this.lastPaid = bill.getDate("LastPaid") == null ? null : bill.getDate("LastPaid").toLocalDate();
-		this.category = MoneyManager.getCategory(bill.getInt("CategoryID"));
-		this.paymentMethod = MoneyManager.getPayment(bill.getInt("PaymentID"));
+		this.category = DataObjects.getCategory(bill.getInt("CategoryID"));
+		this.paymentMethod = DataObjects.getPayment(bill.getInt("PaymentID"));
 	}
 
 	public void doTransaction(double amountPaid, Category category, Payment paymentMethod) {

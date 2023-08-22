@@ -3,10 +3,10 @@ package com.github.deShortOne.Bills;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
-import com.github.deShortOne.Engine.Account;
-import com.github.deShortOne.Engine.Category;
-import com.github.deShortOne.Engine.MoneyManager;
-import com.github.deShortOne.Engine.Payment;
+import com.github.deShortOne.DataObjects.Account;
+import com.github.deShortOne.DataObjects.Category;
+import com.github.deShortOne.DataObjects.DataObjects;
+import com.github.deShortOne.DataObjects.Payment;
 import com.github.deShortOne.Recurrence.FrequencyType;
 import com.github.deShortOne.Recurrence.Recurrence;
 
@@ -15,7 +15,7 @@ public class MainBill {
 	static ArrayList<BillInfo> bills;
 
 	public static void main(String[] args) {
-		MoneyManager.getAccount(2).getId(); // !! MUST ENSURE MONEYMANAGER ALREADY INITALISED
+		DataObjects.getAccount(2).getId(); // !! MUST ENSURE MONEYMANAGER ALREADY INITALISED
 		getBills();
 		BillInfo bi = bills.get(0);
 		bi.setAmount(-5);
@@ -37,9 +37,9 @@ public class MainBill {
 
 		getBills();
 
-		BillInfo biNew = addNewBill(MoneyManager.getAccount(2), MoneyManager.getAccount(1), -10,
+		BillInfo biNew = addNewBill(DataObjects.getAccount(2), DataObjects.getAccount(1), -10,
 				new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2020, 1, 1), null, LocalDate.of(2024, 2, 2)),
-				MoneyManager.getCategory(1), MoneyManager.getPayment(1), LocalDate.of(2023, 1, 10),
+				DataObjects.getCategory(1), DataObjects.getPayment(1), LocalDate.of(2023, 1, 10),
 				LocalDate.of(2027, 1, 10));
 		if (biNew == null) {
 			System.out.println("Insert failed");
@@ -53,11 +53,11 @@ public class MainBill {
 		}
 
 		System.out.println("Transactions done");
-		bi.doTransaction(20, MoneyManager.getCategory(10), MoneyManager.getPayment(1));
+		bi.doTransaction(20, DataObjects.getCategory(10), DataObjects.getPayment(1));
 		printBills(); // or getBills() to confirm that it's in the db
 
 		System.out.println("Transactions done for null last paid");
-		bills.get(5).doTransaction(50, MoneyManager.getCategory(11), MoneyManager.getPayment(2));
+		bills.get(5).doTransaction(50, DataObjects.getCategory(11), DataObjects.getPayment(2));
 		printBills(); // or getBills() to confirm that it's in the db
 
 		System.out.println("Skip a few due dates");

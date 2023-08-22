@@ -3,7 +3,7 @@ package com.github.deShortOne.Budget;
 import java.time.LocalDate;
 import java.util.HashMap;
 
-import com.github.deShortOne.Engine.MoneyManager;
+import com.github.deShortOne.DataObjects.DataObjects;
 
 public class MainBudget {
 
@@ -13,7 +13,7 @@ public class MainBudget {
 				LocalDate.of(2024, 1, 1));
 		for (int i : categoryToAmount.keySet()) {
 			System.out
-				.println(String.format("%20s%15s", MoneyManager.getCategory(i).getName(), categoryToAmount.get(i)));
+				.println(String.format("%20s%15s", DataObjects.getCategory(i).getName(), categoryToAmount.get(i)));
 		}
 		
 		LocalDate[] ld = BudgetPeriod.getStartEndDates(BudgetPeriod.CURRENT_MONTH, LocalDate.now());

@@ -6,7 +6,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 
-import com.github.deShortOne.Engine.MoneyManager;
+import com.github.deShortOne.DataObjects.DataObjects;
 
 public class SQLExecutor {
 
@@ -44,7 +44,7 @@ public class SQLExecutor {
 	 */
 	public static void changeTable(String sqlQuery) throws SQLException {
 		statement.executeLargeUpdate(sqlQuery);
-		MoneyManager.refreshTables();
+		DataObjects.refreshTables();
 	}
 
 	// You need to close the resultSet
