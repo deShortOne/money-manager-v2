@@ -1,6 +1,8 @@
 package com.github.deShortOne.Recurrence;
 
-public enum FrequencyType {
+import com.github.deShortOne.DataObjects.TableCellDataValue;
+
+public enum FrequencyType implements TableCellDataValue {
 	ONCE("Only Once", Frequency.ONE_TIME, 0, 0),
 	DAILY("Daily", Frequency.DAILY, 0, 1),
 	WEEKLY("Weekly", Frequency.WEEKLY, 0, 2),
@@ -47,5 +49,10 @@ public enum FrequencyType {
 
 	public static FrequencyType of(int pos) {
 		return FrequencyType.values()[pos];
+	}
+
+	@Override
+	public String getTableCellValue() {
+		return getName();
 	}
 }

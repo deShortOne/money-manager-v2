@@ -165,6 +165,10 @@ public class Recurrence {
 		this.endDate = endDate;
 		this.dueDate = dueDate;
 	}
+	
+	public FrequencyType getFrequencyType() {
+		return frequencyType;
+	}
 
 	public String getFrequency() {
 		return frequencyType.getName();

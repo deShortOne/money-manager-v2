@@ -17,7 +17,7 @@ public class BillInfo {
 	public static final String headers = String.format(stringFormat, "ID", "Payer", "Payee", "Amount", "Frequency",
 			"Last Paid", "Due Date", "Category", "Payment Method");
 
-	private final int ID;
+	private final int id;
 	private Account payer;
 	private Account payee;
 	private double amount;
@@ -27,7 +27,7 @@ public class BillInfo {
 	private Payment paymentMethod;
 
 	public BillInfo(ResultSet bill) throws SQLException {
-		this.ID = bill.getInt("ID");
+		this.id = bill.getInt("ID");
 		this.payer = DataObjects.getAccount(bill.getInt("PayerAccount"));
 		this.payee = DataObjects.getAccount(bill.getInt("PayeeAccount"));
 		this.amount = bill.getDouble("Amount");
@@ -131,13 +131,13 @@ public class BillInfo {
 		return frequency.getDueDate();
 	}
 
-	public int getID() {
-		return ID;
+	public int getId() {
+		return id;
 	}
 
 	@Override
 	public String toString() {
-		return String.format(stringFormat, ID, payer.getAccountName(), payee.getAccountName(), amount,
+		return String.format(stringFormat, id, payer.getAccountName(), payee.getAccountName(), amount,
 				frequency.getFrequency(), getLastPaid(), getDueDate(), category.getName(), paymentMethod.getName());
 
 	}

@@ -62,7 +62,7 @@ public class DataHandler {
 			SQLExecutor.changeTable(String.format(updateBill, updatedBill.getPayerAccount().getId(),
 					updatedBill.getPayeeAccount().getId(), updatedBill.getAmount(),
 					updatedBill.getFrequency().convertToString(), updatedBill.getPaymentMethod().getId(),
-					updatedBill.getCategory().getId(), lastPaidValue, updatedBill.getID()));
+					updatedBill.getCategory().getId(), lastPaidValue, updatedBill.getId()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -127,7 +127,7 @@ public class DataHandler {
 
 		boolean isSuccess;
 		try {
-			SQLExecutor.changeTable(String.format(addTransaction, bi.getID(), datePaid, amountPaid, category.getId(),
+			SQLExecutor.changeTable(String.format(addTransaction, bi.getId(), datePaid, amountPaid, category.getId(),
 					paymentID.getId()));
 			isSuccess = true;
 		} catch (SQLException e) {
