@@ -22,8 +22,9 @@ public class MoneyManager extends Application {
 		TabPane tabPane = new TabPane();
 
 		Tab home = new Tab("Home", new Label("Put something here! Anything!"));
-		Tab bills = new Tab("Budget"  , MainBillVisual.getVisuals());
-		Tab budget = new Tab("Boats" , new Label("Budget page"));
+		Tab bills = new Tab("Bills", MainBillVisual.getVisuals());
+		Tab budget = new Tab("Budget", new Label("Budget page"));
+		
 		tabPane.getTabs().addAll(home, bills, budget);
 
 		VBox vbox = new VBox(tabPane);

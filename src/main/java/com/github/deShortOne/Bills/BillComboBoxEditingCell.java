@@ -2,14 +2,14 @@ package com.github.deShortOne.Bills;
 
 import java.util.ArrayList;
 
-import com.github.deShortOne.DataObjects.TableCellDataValue;
+import com.github.deShortOne.DataObjects.BaseDataValue;
 
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.cell.ComboBoxTableCell;
 import javafx.util.StringConverter;
 
-public class BillComboBoxEditingCell<T extends TableCellDataValue> extends ComboBoxTableCell<BillInfo, T> {
+public class BillComboBoxEditingCell<T extends BaseDataValue> extends ComboBoxTableCell<BillInfo, T> {
 	private ComboBox<T> comboBox = new ComboBox<>();
 
 	public BillComboBoxEditingCell(ArrayList<T> list) {

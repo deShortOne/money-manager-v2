@@ -9,7 +9,7 @@ import com.github.deShortOne.Bills.BillInfo;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.cell.TextFieldTableCell;
 
-public class TableEditingCell extends TextFieldTableCell<BillInfo, LocalDate> {
+public class LocalDateTableEditingCell extends TextFieldTableCell<BillInfo, LocalDate> {
 	DatePicker datePicker;
 
 	@Override

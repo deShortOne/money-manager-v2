@@ -1,6 +1,6 @@
 package com.github.deShortOne.DataObjects;
 
-public interface TableCellDataValue {
+public interface BaseDataValue {
 	
 	public String getTableCellValue();
 	

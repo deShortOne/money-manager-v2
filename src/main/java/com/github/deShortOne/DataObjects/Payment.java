@@ -3,7 +3,7 @@ package com.github.deShortOne.DataObjects;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-public class Payment implements TableCellDataValue {
+public class Payment implements BaseDataValue {
 
 	private final int id;
 	private String name;

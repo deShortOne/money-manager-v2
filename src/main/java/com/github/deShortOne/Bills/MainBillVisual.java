@@ -9,90 +9,63 @@ import com.github.deShortOne.DataObjects.Category;
 import com.github.deShortOne.DataObjects.DataObjects;
 import com.github.deShortOne.DataObjects.MoneyEditingCell;
 import com.github.deShortOne.DataObjects.Payment;
-import com.github.deShortOne.DataObjects.TableEditingCell;
+import com.github.deShortOne.DataObjects.LocalDateTableEditingCell;
 import com.github.deShortOne.Recurrence.FrequencyType;
 
 import javafx.beans.property.SimpleObjectProperty;
 import javafx.collections.FXCollections;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
+import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 
 public class MainBillVisual {
 
+	private static TableView<BillInfo> table;
+	
 	public static Pane getVisuals() {
 		Label title = new Label("Upcoming bills");
 
 		// in future decide if {@code i -> new PropertyValueFactory("payeeAccount")} would be better
-		TableView<BillInfo> table = new TableView<>();
+		table = new TableView<>();
 		TableColumn<BillInfo, Account> payeeCol = new TableColumn<>("Payee");
 		payeeCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPayeeAccount()));
 		payeeCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllAccounts()));
-		payeeCol.setEditable(true);
-		payeeCol.setOnEditCommit(event -> {
-			BillInfo row = event.getRowValue();
-			Account account = event.getNewValue();
-			row.setPayeeAccount(account);
-		});
 		
 		TableColumn<BillInfo, Double> amountCol = new TableColumn<>("Amount");
 		amountCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getAmount()));
 		amountCol.setCellFactory(c -> new MoneyEditingCell());
-		amountCol.setEditable(true);
-		amountCol.setOnEditCommit(event -> {
-			BillInfo row = event.getRowValue();
-			double amount = event.getNewValue();
-			row.setAmount(amount);
-		});
-		
+
 		TableColumn<BillInfo, LocalDate> dueDateCol = new TableColumn<>("Due Date");
 		dueDateCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getDueDate()));
-		dueDateCol.setCellFactory(c -> new TableEditingCell());
-		dueDateCol.setEditable(false);
+		dueDateCol.setCellFactory(c -> new LocalDateTableEditingCell());
 		
 		TableColumn<BillInfo, FrequencyType> frequencyCol = new TableColumn<>("Frequency");
 		frequencyCol
 			.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getFrequency().getFrequencyType()));
 		frequencyCol.setCellFactory(
 				c -> new BillComboBoxEditingCell<>(new ArrayList<FrequencyType>(Arrays.asList(FrequencyType.values()))));
-		frequencyCol.setEditable(true);
 		
 		TableColumn<BillInfo, Payment> paymentMethodCol = new TableColumn<>("Payment Method");
 		paymentMethodCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPaymentMethod()));
 		paymentMethodCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllPaymentMethods()));
-		paymentMethodCol.setEditable(true);
-		paymentMethodCol.setOnEditCommit(event -> {
-			BillInfo row = event.getRowValue();
-			Payment payment = event.getNewValue();
-			row.setPaymentMethod(payment);
-		});
 
 		TableColumn<BillInfo, Account> payerCol = new TableColumn<>("Account");
 		payerCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPayerAccount()));
 		payerCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllAccounts()));
-		payerCol.setEditable(true);
-		payerCol.setOnEditCommit(event -> {
-			BillInfo row = event.getRowValue();
-			Account account = event.getNewValue();
-			row.setPayeeAccount(account);
-		});
 
 		TableColumn<BillInfo, LocalDate> lastPaidCol = new TableColumn<>("Last Paid");
 		lastPaidCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getDueDate()));
-		lastPaidCol.setCellFactory(c -> new TableEditingCell());
-		lastPaidCol.setEditable(false);
+		lastPaidCol.setCellFactory(c -> new LocalDateTableEditingCell());
 
 		TableColumn<BillInfo, Category> categoryCol = new TableColumn<>("Category");
 		categoryCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getCategory()));
 		categoryCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllCategories()));
-		categoryCol.setEditable(true);
-		categoryCol.setOnEditCommit(event -> {
-			BillInfo row = event.getRowValue();
-			Category category = event.getNewValue();
-			row.setCategory(category);
-		});
 
 		table.getColumns().add(payeeCol);
 		table.getColumns().add(amountCol);
@@ -103,11 +76,33 @@ public class MainBillVisual {
 		table.getColumns().add(lastPaidCol);
 		table.getColumns().add(categoryCol);
 		table.setItems(FXCollections.observableArrayList(DataHandler.getBills()));
-		table.setEditable(true);
+		// ---------
+
+		Button enterInRegister = new Button("Enter in Register");
+		Button newBill = new Button("New Bill");
+		newBill.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent e) {
+		        BillInfo bi = ChangeBill.getVisuals();
+		        addNewBillInfo(bi);
+		    }
+		});
+		Button editBill = new Button("Edit Bill");
+		Button skipBill = new Button("Skip Bill");
+		Button deleteBill = new Button("Delete Bill");
+		
+		HBox actions = new HBox();
+		actions.getChildren().addAll(enterInRegister, newBill, editBill, skipBill, deleteBill);
 
 		VBox vbox = new VBox();
-		vbox.getChildren().addAll(title, table);
+		vbox.getChildren().addAll(title, table, actions);
 
 		return vbox;
+	}
+	
+	
+	public static void addNewBillInfo(BillInfo bi) {
+		// get added to list
+		table.setItems(FXCollections.observableArrayList(DataHandler.getBills()));
 	}
 }
