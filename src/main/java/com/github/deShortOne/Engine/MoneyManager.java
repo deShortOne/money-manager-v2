@@ -12,31 +12,31 @@ import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 
 public class MoneyManager extends Application {
-	
+
 	public static final String MONEY_FORMAT = "£%.2f";
-	
+
 	@Override
 	public void start(Stage primaryStage) throws Exception {
 		DataObjects.getAccount(0);
-		
+
 		TabPane tabPane = new TabPane();
 
 		Tab home = new Tab("Home", new Label("Put something here! Anything!"));
 		Tab bills = new Tab("Bills", MainBillVisual.getVisuals());
 		Tab budget = new Tab("Budget", new Label("Budget page"));
-		
+
 		tabPane.getTabs().addAll(home, bills, budget);
 
 		VBox vbox = new VBox(tabPane);
 		Scene scene = new Scene(vbox);
-		
+
 		primaryStage.setScene(scene);
 		primaryStage.setTitle("Budget tracker");
-		primaryStage.show();		
+		primaryStage.show();
 	}
-	
+
 	public static void main(String[] args) {
-		 launch();
+		launch();
 	}
-	
+
 }

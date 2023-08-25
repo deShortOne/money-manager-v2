@@ -9,15 +9,15 @@ import javafx.util.StringConverter;
 
 // To be NOT BillInfo
 public class MoneyEditingCell extends TextFieldTableCell<BillInfo, Double> {
-	
+
 	private static NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-	
+
 	@Override
 	public void startEdit() {
 		if (getTableRow() != null && !getTableRow().isEditable()) {
 			return;
 		}
-		
+
 		StringConverter<Double> sc = new StringConverter<>() {
 			@Override
 			public String toString(Double object) {

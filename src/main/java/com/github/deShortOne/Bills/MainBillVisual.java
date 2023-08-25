@@ -27,16 +27,17 @@ import javafx.scene.layout.VBox;
 public class MainBillVisual {
 
 	private static TableView<BillInfo> table;
-	
+
 	public static Pane getVisuals() {
 		Label title = new Label("Upcoming bills");
 
-		// in future decide if {@code i -> new PropertyValueFactory("payeeAccount")} would be better
+		// in future decide if {@code i -> new PropertyValueFactory("payeeAccount")}
+		// would be better
 		table = new TableView<>();
 		TableColumn<BillInfo, Account> payeeCol = new TableColumn<>("Payee");
 		payeeCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPayeeAccount()));
 		payeeCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllAccounts()));
-		
+
 		TableColumn<BillInfo, Double> amountCol = new TableColumn<>("Amount");
 		amountCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getAmount()));
 		amountCol.setCellFactory(c -> new MoneyEditingCell());
@@ -44,13 +45,13 @@ public class MainBillVisual {
 		TableColumn<BillInfo, LocalDate> dueDateCol = new TableColumn<>("Due Date");
 		dueDateCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getDueDate()));
 		dueDateCol.setCellFactory(c -> new LocalDateTableEditingCell());
-		
+
 		TableColumn<BillInfo, FrequencyType> frequencyCol = new TableColumn<>("Frequency");
 		frequencyCol
 			.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getFrequency().getFrequencyType()));
-		frequencyCol.setCellFactory(
-				c -> new BillComboBoxEditingCell<>(new ArrayList<FrequencyType>(Arrays.asList(FrequencyType.values()))));
-		
+		frequencyCol.setCellFactory(c -> new BillComboBoxEditingCell<>(
+				new ArrayList<FrequencyType>(Arrays.asList(FrequencyType.values()))));
+
 		TableColumn<BillInfo, Payment> paymentMethodCol = new TableColumn<>("Payment Method");
 		paymentMethodCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPaymentMethod()));
 		paymentMethodCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllPaymentMethods()));
@@ -81,23 +82,37 @@ public class MainBillVisual {
 		Button enterInRegister = new Button("Enter in Register");
 		Button newBill = new Button("New Bill");
 		newBill.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override
-		    public void handle(ActionEvent e) {
-		        BillInfo bi = ChangeBill.getVisuals();
-		        addNewBillInfo(bi);
-		    }
+			@Override
+			public void handle(ActionEvent e) {
+				BillInfo bi = ChangeBill.getVisuals();
+				addNewBillInfo(bi);
+			}
 		});
 		Button editBill = new Button("Edit Bill");
 		editBill.setOnAction(new EventHandler<ActionEvent>() {
-		    @Override
-		    public void handle(ActionEvent e) {
-		        ChangeBill.getVisuals(table.getSelectionModel().getSelectedItem());
-		        refreshTable();
-		    }
+			@Override
+			public void handle(ActionEvent e) {
+				ChangeBill.getVisuals(table.getSelectionModel().getSelectedItem());
+				refreshTable();
+			}
 		});
 		Button skipBill = new Button("Skip Bill");
+		skipBill.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				table.getSelectionModel().getSelectedItem().iterateDueDate();
+				refreshTable();
+			}
+		});
 		Button deleteBill = new Button("Delete Bill");
-		
+		deleteBill.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				table.getSelectionModel().getSelectedItem().deactivate();
+				refreshTable();
+			}
+		});
+
 		HBox actions = new HBox();
 		actions.getChildren().addAll(enterInRegister, newBill, editBill, skipBill, deleteBill);
 
@@ -106,13 +121,13 @@ public class MainBillVisual {
 
 		return vbox;
 	}
-	
+
 	public static void addNewBillInfo(BillInfo bi) {
 		// get added to list
 		table.setItems(FXCollections.observableArrayList(DataHandler.getBills()));
 		refreshTable();
 	}
-	
+
 	public static void refreshTable() {
 		table.setItems(FXCollections.observableArrayList(DataHandler.getBills()));
 	}

@@ -22,7 +22,7 @@ public class DataObjects {
 	public static Account getAccount(int id) {
 		return accounts.get(id);
 	}
-	
+
 	public static ArrayList<Account> getAllAccounts() {
 		return new ArrayList<>(accounts.values());
 	}
@@ -30,7 +30,7 @@ public class DataObjects {
 	public static Category getCategory(int id) {
 		return categories.get(id);
 	}
-	
+
 	public static ArrayList<Category> getAllCategories() {
 		return new ArrayList<Category>(categories.values());
 	}
@@ -38,7 +38,7 @@ public class DataObjects {
 	public static Payment getPayment(int id) {
 		return paymentMethods.get(id);
 	}
-	
+
 	public static ArrayList<Payment> getAllPaymentMethods() {
 		return new ArrayList<Payment>(paymentMethods.values());
 	}

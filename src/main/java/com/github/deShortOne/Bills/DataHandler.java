@@ -23,6 +23,7 @@ public class DataHandler {
 			.append("	CategoryID, ")
 			.append("	LastPaid ")
 			.append("FROM bills ")
+			.append("WHERE IsActive = TRUE ")
 			.toString();
 
 		ArrayList<BillInfo> output = new ArrayList<>();
@@ -136,5 +137,18 @@ public class DataHandler {
 		}
 
 		return isSuccess;
+	}
+
+	public static void deactivateBill(BillInfo bi) {
+		String deactiveBill = new StringBuilder().append("UPDATE bills ")
+			.append("SET IsActive = false ")
+			.append("WHERE ID = %d")
+			.toString();
+
+		try {
+			SQLExecutor.changeTable(String.format(deactiveBill, bi.getId()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

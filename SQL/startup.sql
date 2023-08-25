@@ -36,6 +36,7 @@ CREATE TABLE bills (
 	PaymentID INT,
 	CategoryID INT,
 	LastPaid DATE,
+	IsActive BOOLEAN DEFAULT TRUE,
 	PRIMARY KEY(ID),
 	FOREIGN KEY(PayerAccount) REFERENCES accounts(ID),
 	FOREIGN KEY(PayeeAccount) REFERENCES accounts(ID),

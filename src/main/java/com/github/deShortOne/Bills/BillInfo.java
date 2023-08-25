@@ -107,6 +107,10 @@ public class BillInfo {
 		return id;
 	}
 
+	public void deactivate() {
+		DataHandler.deactivateBill(this);
+	}
+
 	@Override
 	public String toString() {
 		return String.format(stringFormat, id, payer.getAccountName(), payee.getAccountName(), amount,

@@ -17,13 +17,13 @@ public class DailyTest {
 	private LocalDate nextDueDate;
 
 	private static final LocalDate start = LocalDate.of(1970, 1, 1);
-	
+
 	@BeforeEach
 	public void startup() {
-	    long days = ChronoUnit.DAYS.between(start, LocalDate.now().plusYears(10));
-	    LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
-	    
-	    dueDate = randomDate;
+		long days = ChronoUnit.DAYS.between(start, LocalDate.now().plusYears(10));
+		LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
+
+		dueDate = randomDate;
 		nextDueDate = dueDate.plusDays(1);
 		rec = new Recurrence(FrequencyType.DAILY, dueDate, null);
 	}
@@ -31,14 +31,14 @@ public class DailyTest {
 	@Test
 	public void currDateAfterEndDate() {
 		rec.updateRecurrence(FrequencyType.DAILY, dueDate, dueDate.minusDays(1));
-		
+
 		assertEquals(null, rec.getNextDueDate());
 	}
 
 	@Test
 	public void currDateOnEndDate() {
 		rec.updateRecurrence(FrequencyType.DAILY, dueDate, dueDate);
-		
+
 		assertEquals(null, rec.getNextDueDate());
 	}
 
@@ -60,7 +60,7 @@ public class DailyTest {
 	}
 
 	public void invalidUse() {
-		
+
 	}
 
 	@Test

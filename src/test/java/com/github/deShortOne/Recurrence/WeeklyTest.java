@@ -12,18 +12,18 @@ import org.junit.jupiter.api.Test;
 public class WeeklyTest {
 
 	private Recurrence rec;
-	
+
 	private LocalDate dueDate;
 	private LocalDate nextDueDate;
 
 	private static final LocalDate start = LocalDate.of(1970, 1, 1);
-	
+
 	@BeforeEach
 	public void startEach() {
-	    long days = ChronoUnit.DAYS.between(start, LocalDate.now().plusYears(10));
-	    LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
-	    
-	    dueDate = randomDate;
+		long days = ChronoUnit.DAYS.between(start, LocalDate.now().plusYears(10));
+		LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
+
+		dueDate = randomDate;
 		nextDueDate = dueDate.plusWeeks(1);
 		rec = new Recurrence(FrequencyType.WEEKLY, dueDate, null);
 	}
@@ -31,7 +31,7 @@ public class WeeklyTest {
 	@Test
 	public void currDateAfterEndDate() {
 		rec.updateRecurrence(FrequencyType.WEEKLY, dueDate, dueDate.minusDays(1));
-		
+
 		assertEquals(null, rec.getNextDueDate());
 	}
 

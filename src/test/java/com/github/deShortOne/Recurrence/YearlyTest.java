@@ -16,13 +16,13 @@ public class YearlyTest {
 	private LocalDate nextDueDate;
 
 	private static final LocalDate start = LocalDate.of(1970, 1, 1);
-	
+
 	@BeforeEach
-	public void startEach() {		
+	public void startEach() {
 		long days = ChronoUnit.DAYS.between(start, LocalDate.now().plusYears(10));
-	    LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
-	    
-	    dueDate = randomDate;
+		LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
+
+		dueDate = randomDate;
 		nextDueDate = dueDate.plusYears(1);
 		rec = new Recurrence(FrequencyType.YEARLY, dueDate, null);
 	}

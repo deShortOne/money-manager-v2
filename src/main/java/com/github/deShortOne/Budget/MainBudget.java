@@ -15,9 +15,9 @@ public class MainBudget {
 			System.out
 				.println(String.format("%20s%15s", DataObjects.getCategory(i).getName(), categoryToAmount.get(i)));
 		}
-		
+
 		LocalDate[] ld = BudgetPeriod.getStartEndDates(BudgetPeriod.CURRENT_MONTH, LocalDate.now());
 		System.out.println(ld[0]);
-		System.out.println(ld[1]); 
+		System.out.println(ld[1]);
 	}
 }
