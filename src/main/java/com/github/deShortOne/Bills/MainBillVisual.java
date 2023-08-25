@@ -7,9 +7,9 @@ import java.util.Arrays;
 import com.github.deShortOne.DataObjects.Account;
 import com.github.deShortOne.DataObjects.Category;
 import com.github.deShortOne.DataObjects.DataObjects;
+import com.github.deShortOne.DataObjects.LocalDateTableEditingCell;
 import com.github.deShortOne.DataObjects.MoneyEditingCell;
 import com.github.deShortOne.DataObjects.Payment;
-import com.github.deShortOne.DataObjects.LocalDateTableEditingCell;
 import com.github.deShortOne.Recurrence.FrequencyType;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -50,7 +50,7 @@ public class MainBillVisual {
 		frequencyCol
 			.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getFrequency().getFrequencyType()));
 		frequencyCol.setCellFactory(c -> new BillComboBoxEditingCell<>(
-				new ArrayList<FrequencyType>(Arrays.asList(FrequencyType.values()))));
+				new ArrayList<>(Arrays.asList(FrequencyType.values()))));
 
 		TableColumn<BillInfo, Payment> paymentMethodCol = new TableColumn<>("Payment Method");
 		paymentMethodCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPaymentMethod()));

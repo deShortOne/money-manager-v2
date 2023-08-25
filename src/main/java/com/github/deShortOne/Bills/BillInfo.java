@@ -53,7 +53,7 @@ public class BillInfo {
 		this.payer = payer;
 		this.payee = payee;
 		this.amount = amount;
-		this.frequency.updateRecurrence(frequencyType, newDueDate, endDate);;
+		this.frequency.updateRecurrence(frequencyType, newDueDate, endDate);
 		this.category = category;
 		this.paymentMethod = paymentMethod;
 		DataHandler.updateBill(this);

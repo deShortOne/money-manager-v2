@@ -26,7 +26,7 @@ public class SQLExecutor {
 
 	/**
 	 * WILL NEED TO CLOSE RESULT SET
-	 * 
+	 *
 	 * @param sqlQuery
 	 * @return
 	 * @throws SQLException
@@ -38,7 +38,7 @@ public class SQLExecutor {
 
 	/**
 	 * INSERT UPDATE OR DELETE ONLY
-	 * 
+	 *
 	 * @param sqlQuery
 	 * @throws SQLException
 	 */

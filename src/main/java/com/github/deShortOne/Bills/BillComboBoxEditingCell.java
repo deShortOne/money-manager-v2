@@ -48,7 +48,7 @@ public class BillComboBoxEditingCell<T extends BaseDataValue> extends ComboBoxTa
 	private void createComboBox(ArrayList<T> dataList) {
 		comboBox.getItems().addAll(dataList);
 		comboBox.setCellFactory(c -> {
-			return new ListCell<T>() {
+			return new ListCell<>() {
 				@Override
 				protected void updateItem(T item, boolean empty) {
 					super.updateItem(item, empty);

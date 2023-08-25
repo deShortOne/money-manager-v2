@@ -32,7 +32,7 @@ public class DataObjects {
 	}
 
 	public static ArrayList<Category> getAllCategories() {
-		return new ArrayList<Category>(categories.values());
+		return new ArrayList<>(categories.values());
 	}
 
 	public static Payment getPayment(int id) {
@@ -40,6 +40,6 @@ public class DataObjects {
 	}
 
 	public static ArrayList<Payment> getAllPaymentMethods() {
-		return new ArrayList<Payment>(paymentMethods.values());
+		return new ArrayList<>(paymentMethods.values());
 	}
 }

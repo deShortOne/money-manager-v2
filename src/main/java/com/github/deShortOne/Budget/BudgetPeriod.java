@@ -18,7 +18,7 @@ public enum BudgetPeriod {
 
 	/**
 	 * Inclusive first day, exclusive last day.
-	 * 
+	 *
 	 * @param bp
 	 * @param ld
 	 * @return

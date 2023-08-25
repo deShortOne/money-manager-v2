@@ -3,9 +3,9 @@ package com.github.deShortOne.Recurrence;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.MonthDay;
-import java.time.temporal.TemporalAdjusters;
-import java.time.temporal.TemporalAdjuster;
 import java.time.YearMonth;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 
 public class Recurrence {
 
@@ -52,7 +52,7 @@ public class Recurrence {
 
 	/**
 	 * Creates a recurrence object.
-	 * 
+	 *
 	 * @param frequencyType
 	 * @param temporal      must be {@code DayOfWeek}, {@code DayNumber} or
 	 *                      {@code MonthDay}
@@ -63,7 +63,7 @@ public class Recurrence {
 
 	/**
 	 * Generates a Recurrence object based on {@code convertToString}.
-	 * 
+	 *
 	 * @param text
 	 */
 	public Recurrence(String text) {
@@ -115,7 +115,7 @@ public class Recurrence {
 
 	/**
 	 * Gets the next date according to set frequency.
-	 * 
+	 *
 	 * @param ld date to be evaluated, not null
 	 * @return next date
 	 * @throw NullPointerException if ld is null
@@ -163,7 +163,7 @@ public class Recurrence {
 
 	/**
 	 * Gets currently set end date.
-	 * 
+	 *
 	 * @return end date
 	 */
 	public LocalDate getEndDate() {
@@ -172,7 +172,7 @@ public class Recurrence {
 
 	/**
 	 * Sets the due date to next. Returns null if due date is has passed end date.
-	 * 
+	 *
 	 * @return the next date/ currently set date
 	 */
 	public LocalDate updateDueDate() {
@@ -186,7 +186,7 @@ public class Recurrence {
 	 * Each part is split by semi-colon.
 	 * FrequencyTypeID;StartDate;EndDate;NextPayDate; The rest of the string is
 	 * frequency specific
-	 * 
+	 *
 	 * @return
 	 */
 	public String convertToString() {

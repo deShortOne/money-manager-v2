@@ -14,7 +14,7 @@ public class BillComboBox {
 		ComboBox<T> comboBox = new ComboBox<>();
 		comboBox.getItems().addAll(dataList);
 		comboBox.setCellFactory(c -> {
-			return new ListCell<T>() {
+			return new ListCell<>() {
 				@Override
 				protected void updateItem(T item, boolean empty) {
 					super.updateItem(item, empty);
