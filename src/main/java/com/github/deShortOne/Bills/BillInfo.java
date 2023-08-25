@@ -48,6 +48,17 @@ public class BillInfo {
 		}
 	}
 
+	public void updateBill(Account payer, Account payee, double amount, Category category, Payment paymentMethod,
+			FrequencyType frequencyType, LocalDate newDueDate, LocalDate endDate) {
+		this.payer = payer;
+		this.payee = payee;
+		this.amount = amount;
+		this.frequency.updateRecurrence(frequencyType, newDueDate, endDate);;
+		this.category = category;
+		this.paymentMethod = paymentMethod;
+		DataHandler.updateBill(this);
+	}
+
 	/**
 	 * Moves due date to next date. Can also be used to skip. Updates database.
 	 */
@@ -60,60 +71,28 @@ public class BillInfo {
 		return payer;
 	}
 
-	public void setPayerAccount(Account payerName) {
-		this.payer = payerName;
-	}
-
 	public Account getPayeeAccount() {
 		return payee;
-	}
-
-	public void setPayeeAccount(Account payeeName) {
-		this.payee = payeeName;
 	}
 
 	public double getAmount() {
 		return amount;
 	}
 
-	public void setAmount(double amount) {
-		this.amount = amount;
-	}
-
 	public Category getCategory() {
 		return category;
-	}
-
-	public void setCategory(Category category) {
-		this.category = category;
 	}
 
 	public Payment getPaymentMethod() {
 		return paymentMethod;
 	}
 
-	public void setPaymentMethod(Payment paymentMethod) {
-		this.paymentMethod = paymentMethod;
-	}
-
 	public Recurrence getFrequency() {
 		return frequency;
-	}
-	
-	public void setFrequency(Recurrence frequency) {
-		this.frequency = frequency;
-	}
-
-	public void updateFrequency(FrequencyType frequencyType, LocalDate dueDate, LocalDate endDate) {
-		frequency.updateRecurrence(frequencyType, dueDate, endDate);
 	}
 
 	public LocalDate getLastPaid() {
 		return lastPaid;
-	}
-
-	public void setLastPaid(LocalDate lastPaid) {
-		this.lastPaid = lastPaid;
 	}
 
 	public LocalDate getEndDate() {

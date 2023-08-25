@@ -18,12 +18,11 @@ public class MainBill {
 		DataObjects.getAccount(2).getId(); // !! MUST ENSURE MONEYMANAGER ALREADY INITALISED
 		getBills();
 		BillInfo bi = bills.get(0);
-		bi.setAmount(-5);
 
 		Account payerName = bi.getPayerAccount();
 		Account payeeName = bi.getPayeeAccount();
-		bi.setPayeeAccount(payerName);
-		bi.setPayerAccount(payeeName);
+		bi.updateBill(payerName, payeeName, -6, bi.getCategory(), bi.getPaymentMethod(),
+				bi.getFrequency().getFrequencyType(), bi.getDueDate(), bi.getEndDate());
 
 		boolean isSuccess = updateBill(bi);
 
@@ -36,9 +35,8 @@ public class MainBill {
 		getBills();
 
 		BillInfo biNew = addNewBill(DataObjects.getAccount(2), DataObjects.getAccount(1), -10,
-				new Recurrence(FrequencyType.DAILY, LocalDate.of(2020, 1, 1), null),
-				DataObjects.getCategory(1), DataObjects.getPayment(1), LocalDate.of(2023, 1, 10),
-				LocalDate.of(2027, 1, 10));
+				new Recurrence(FrequencyType.DAILY, LocalDate.of(2020, 1, 1), null), DataObjects.getCategory(1),
+				DataObjects.getPayment(1), LocalDate.of(2023, 1, 10), LocalDate.of(2027, 1, 10));
 		if (biNew == null) {
 			System.out.println("Insert failed");
 			return;

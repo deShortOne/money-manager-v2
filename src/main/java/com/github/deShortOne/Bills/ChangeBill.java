@@ -45,7 +45,7 @@ public class ChangeBill {
 	private static Text payer;
 	private static ComboBox<Account> payFromAccount;
 	private static Text paymentMethod;
-	private static ComboBox<Payment> paymentMethodPayment;
+	private static ComboBox<Payment> paymentMethodCombo;
 	private static Text amount;
 	private static TextField amountField;
 	private static Text categoryText;
@@ -54,8 +54,10 @@ public class ChangeBill {
 	private static DatePicker nextPaymentDate;
 	private static Text frequencyText;
 	private static ComboBox<FrequencyType> frequency;
+	
+	private static NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 
-	private static BillInfo toBeReturned = null;
+	private static boolean isSuccess;
 
 	static {
 		payee = new Text("Pay to: ");
@@ -66,14 +68,12 @@ public class ChangeBill {
 		payFromAccount = BillComboBox.createComboBox(DataObjects.getAllAccounts());
 
 		paymentMethod = new Text("Payment method: ");
-		paymentMethodPayment = BillComboBox.createComboBox(DataObjects.getAllPaymentMethods());
+		paymentMethodCombo = BillComboBox.createComboBox(DataObjects.getAllPaymentMethods());
 
 		amount = new Text("Amount: ");
 		amountField = new TextField();
 		amountField.setEditable(true);
 		StringConverter<Double> converter = new DoubleStringConverter() {
-			NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
-
 			@Override
 			public String toString(Double object) {
 				StringBuilder output = new StringBuilder();
@@ -121,7 +121,7 @@ public class ChangeBill {
 		gp.add(payFromAccount, 1, 1);
 
 		gp.add(paymentMethod, 0, 2);
-		gp.add(paymentMethodPayment, 1, 2);
+		gp.add(paymentMethodCombo, 1, 2);
 
 		gp.add(amount, 0, 3);
 		gp.add(amountField, 1, 3);
@@ -159,20 +159,47 @@ public class ChangeBill {
 
 	public static void getVisuals(BillInfo bi) {
 		title.setText(String.format("Edit your %s bills", bi.getPayeeAccount().getAccountName()));
-		changeBillStage.showAndWait();
+		payToAccount.getSelectionModel().select(bi.getPayerAccount());
+		payFromAccount.getSelectionModel().select(bi.getPayeeAccount());
+		amountField.setText(currencyFormat.format(bi.getAmount()));
+		categoryCombo.getSelectionModel().select(bi.getCategory());
+		paymentMethodCombo.getSelectionModel().select(bi.getPaymentMethod());
+		frequency.getSelectionModel().select(bi.getFrequency().getFrequencyType());
+		nextPaymentDate.setValue(bi.getDueDate());
 		
+		changeBillStage.showAndWait();
+
+		if (isSuccess) {
+			bi.updateBill(payToAccount.getValue(), payFromAccount.getValue(),
+					Double.parseDouble(amountField.getText().replaceAll("£*,*", "")), categoryCombo.getValue(),
+					paymentMethodCombo.getValue(), frequency.getValue(), nextPaymentDate.getValue(), null);
+		}
 	}
 
 	public static BillInfo getVisuals() {
-		title.setText(("New bill"));
-
+		title.setText("New bill");
+		payToAccount.getSelectionModel().select(null);
+		payFromAccount.getSelectionModel().select(null);
+		amountField.setText("");
+		categoryCombo.getSelectionModel().select(null);
+		paymentMethodCombo.getSelectionModel().select(null);
+		frequency.getSelectionModel().select(null);
+		nextPaymentDate.setValue(null);
+		
 		changeBillStage.showAndWait();
 
-		return toBeReturned;
+		if (!isSuccess) {
+			return null;
+		}
+		
+		Recurrence r = new Recurrence(frequency.getValue(), nextPaymentDate.getValue(), null);
+		return DataHandler.addNewBill(payToAccount.getValue(), payFromAccount.getValue(),
+				Double.parseDouble(amountField.getText().replaceAll("£*,*", "")), r, categoryCombo.getValue(),
+				paymentMethodCombo.getValue());
 	}
 
 	private static boolean allNecessaryFieldsDone() {
-		boolean isSuccess = true;
+		isSuccess = true;
 		if (payToAccount.getValue() == null) {
 			payee.setFill(Color.RED);
 			isSuccess = false;
@@ -185,7 +212,7 @@ public class ChangeBill {
 		} else {
 			payer.setFill(Color.BLACK);
 		}
-		if (paymentMethodPayment.getValue() == null) {
+		if (paymentMethodCombo.getValue() == null) {
 			paymentMethod.setFill(Color.RED);
 			isSuccess = false;
 		} else {
@@ -216,14 +243,6 @@ public class ChangeBill {
 			frequencyText.setFill(Color.BLACK);
 		}
 
-		Recurrence r = new Recurrence(frequency.getValue(), nextPaymentDate.getValue(), null);
-		r.updateDueDate();
-
-		if (isSuccess) {
-			toBeReturned = DataHandler.addNewBill(payToAccount.getValue(), payFromAccount.getValue(),
-					Double.parseDouble(amountField.getText().replaceAll("£*,*", "")), r, categoryCombo.getValue(),
-					paymentMethodPayment.getValue());
-		}
 		return isSuccess;
 	}
 }

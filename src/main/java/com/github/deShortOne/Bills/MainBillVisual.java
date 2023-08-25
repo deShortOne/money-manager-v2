@@ -88,6 +88,13 @@ public class MainBillVisual {
 		    }
 		});
 		Button editBill = new Button("Edit Bill");
+		editBill.setOnAction(new EventHandler<ActionEvent>() {
+		    @Override
+		    public void handle(ActionEvent e) {
+		        ChangeBill.getVisuals(table.getSelectionModel().getSelectedItem());
+		        refreshTable();
+		    }
+		});
 		Button skipBill = new Button("Skip Bill");
 		Button deleteBill = new Button("Delete Bill");
 		
@@ -100,9 +107,13 @@ public class MainBillVisual {
 		return vbox;
 	}
 	
-	
 	public static void addNewBillInfo(BillInfo bi) {
 		// get added to list
+		table.setItems(FXCollections.observableArrayList(DataHandler.getBills()));
+		refreshTable();
+	}
+	
+	public static void refreshTable() {
 		table.setItems(FXCollections.observableArrayList(DataHandler.getBills()));
 	}
 }
