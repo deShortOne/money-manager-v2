@@ -25,8 +25,6 @@ public class MainBill {
 		bi.setPayeeAccount(payerName);
 		bi.setPayerAccount(payeeName);
 
-		bi.setStartDate(bi.getStartDate().minusDays(1));
-
 		boolean isSuccess = updateBill(bi);
 
 		if (isSuccess) {
@@ -38,7 +36,7 @@ public class MainBill {
 		getBills();
 
 		BillInfo biNew = addNewBill(DataObjects.getAccount(2), DataObjects.getAccount(1), -10,
-				new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2020, 1, 1), null, LocalDate.of(2024, 2, 2)),
+				new Recurrence(FrequencyType.DAILY, LocalDate.of(2020, 1, 1), null),
 				DataObjects.getCategory(1), DataObjects.getPayment(1), LocalDate.of(2023, 1, 10),
 				LocalDate.of(2027, 1, 10));
 		if (biNew == null) {

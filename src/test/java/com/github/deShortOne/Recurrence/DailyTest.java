@@ -1,10 +1,10 @@
 package com.github.deShortOne.Recurrence;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.junit.jupiter.api.Assertions.assertTrue;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Random;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -13,76 +13,62 @@ public class DailyTest {
 
 	private Recurrence rec;
 
-	private LocalDate currDate = LocalDate.of(2023, 1, 15);
-	private LocalDate nextDate = currDate.plusDays(1);
+	private LocalDate dueDate;
+	private LocalDate nextDueDate;
 
+	private static final LocalDate start = LocalDate.of(1970, 1, 1);
+	
 	@BeforeEach
-	public void startEach() {
-		rec = new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2023, 1, 15), null, LocalDate.of(2023, 1, 16));
-	}
-
-	@Test
-	public void currDateBeforeStartDate() {
-		LocalDate startDate = LocalDate.of(2023, 1, 20);
-		assertTrue(startDate.isAfter(currDate));
-
-		rec.setStartDate(startDate);
-		assertEquals(rec.getNextDate(currDate), startDate);
-	}
-
-	@Test
-	public void currDateOnStartDate() {
-		rec.setStartDate(currDate);
-		assertEquals(rec.getNextDate(currDate), nextDate);
+	public void startup() {
+	    long days = ChronoUnit.DAYS.between(start, LocalDate.now().plusYears(10));
+	    LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
+	    
+	    dueDate = randomDate;
+		nextDueDate = dueDate.plusDays(1);
+		rec = new Recurrence(FrequencyType.DAILY, dueDate, null);
 	}
 
 	@Test
 	public void currDateAfterEndDate() {
-		LocalDate endDate = LocalDate.of(2023, 1, 10);
-		assertTrue(endDate.isBefore(currDate));
-
-		rec.setStartDate(LocalDate.of(2020, 1, 10));
-		rec.setEndDate(endDate);
-		assertEquals(rec.getNextDate(currDate), null);
+		rec.updateRecurrence(FrequencyType.DAILY, dueDate, dueDate.minusDays(1));
+		
+		assertEquals(null, rec.getNextDueDate());
 	}
 
 	@Test
 	public void currDateOnEndDate() {
-		LocalDate endDate = LocalDate.of(2023, 1, 10);
-		rec.setStartDate(LocalDate.of(2020, 1, 10));
-		rec.setEndDate(endDate);
-		assertEquals(rec.getNextDate(endDate), null);
+		rec.updateRecurrence(FrequencyType.DAILY, dueDate, dueDate);
+		
+		assertEquals(null, rec.getNextDueDate());
 	}
 
 	@Test
 	public void normalUsage() {
-		assertEquals(rec.getNextDate(currDate), nextDate);
+		assertEquals(dueDate, rec.getDueDate());
+		assertEquals(nextDueDate, rec.getNextDueDate());
 	}
 
 	@Test
-	public void useCurrDate() {
-		rec.setDueDate(currDate);
-		assertEquals(rec.getNextDueDate(), nextDate);
+	public void multipleUpdateDueDate() {
+		assertEquals(nextDueDate, rec.getNextDueDate());
 
-		assertEquals(rec.updateDueDate(), nextDate);
-		assertEquals(rec.updateDueDate(), nextDate.plusDays(1));
-		assertEquals(rec.updateDueDate(), nextDate.plusDays(2));
-		assertEquals(rec.updateDueDate(), nextDate.plusDays(3));
-		assertEquals(rec.updateDueDate(), nextDate.plusDays(4));
+		assertEquals(nextDueDate, rec.updateDueDate());
+		assertEquals(nextDueDate.plusDays(1), rec.updateDueDate());
+		assertEquals(nextDueDate.plusDays(2), rec.updateDueDate());
+		assertEquals(nextDueDate.plusDays(3), rec.updateDueDate());
+		assertEquals(nextDueDate.plusDays(4), rec.updateDueDate());
 	}
 
 	public void invalidUse() {
-		assertThrows(NullPointerException.class, () -> rec.updateDueDate());
+		
 	}
 
 	@Test
 	public void stringConversion() {
-		Recurrence r = new Recurrence(FrequencyType.DAILY, null, LocalDate.of(2023, 4, 10), null,
-				LocalDate.of(2023, 4, 10));
-		String textToDatabase = r.convertToString();
-		System.out.println(textToDatabase);
-		Recurrence r2 = new Recurrence(textToDatabase);
-		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 10)), LocalDate.of(2023, 4, 11));
-		assertEquals(r2.getNextDate(LocalDate.of(2023, 4, 15)), LocalDate.of(2023, 4, 16));
+		String textToDatabase = rec.convertToString();
+
+		Recurrence rec2 = new Recurrence(textToDatabase);
+		assertEquals(nextDueDate, rec2.updateDueDate());
+		assertEquals(nextDueDate.plusDays(1), rec2.updateDueDate());
 	}
 }

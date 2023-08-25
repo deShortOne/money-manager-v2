@@ -216,8 +216,7 @@ public class ChangeBill {
 			frequencyText.setFill(Color.BLACK);
 		}
 
-		Recurrence r = new Recurrence(frequency.getValue(), null, nextPaymentDate.getValue(), null,
-				nextPaymentDate.getValue());
+		Recurrence r = new Recurrence(frequency.getValue(), nextPaymentDate.getValue(), null);
 		r.updateDueDate();
 
 		if (isSuccess) {

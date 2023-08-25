@@ -8,6 +8,7 @@ import com.github.deShortOne.DataObjects.Account;
 import com.github.deShortOne.DataObjects.Category;
 import com.github.deShortOne.DataObjects.DataObjects;
 import com.github.deShortOne.DataObjects.Payment;
+import com.github.deShortOne.Recurrence.FrequencyType;
 import com.github.deShortOne.Recurrence.Recurrence;
 
 public class BillInfo {
@@ -98,9 +99,13 @@ public class BillInfo {
 	public Recurrence getFrequency() {
 		return frequency;
 	}
-
+	
 	public void setFrequency(Recurrence frequency) {
 		this.frequency = frequency;
+	}
+
+	public void updateFrequency(FrequencyType frequencyType, LocalDate dueDate, LocalDate endDate) {
+		frequency.updateRecurrence(frequencyType, dueDate, endDate);
 	}
 
 	public LocalDate getLastPaid() {
@@ -111,20 +116,8 @@ public class BillInfo {
 		this.lastPaid = lastPaid;
 	}
 
-	public LocalDate getStartDate() {
-		return frequency.getStartDate();
-	}
-
-	public void setStartDate(LocalDate startDate) {
-		frequency.setStartDate(startDate);
-	}
-
 	public LocalDate getEndDate() {
 		return frequency.getEndDate();
-	}
-
-	public void setEndDate(LocalDate endDate) {
-		frequency.setEndDate(endDate);
 	}
 
 	public LocalDate getDueDate() {

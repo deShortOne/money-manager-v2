@@ -3,38 +3,45 @@ package com.github.deShortOne.Recurrence;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.util.Random;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 public class OneTime {
 
-	private LocalDate currDate = LocalDate.of(2023, 1, 15);
-	private LocalDate startDate = LocalDate.of(2023, 1, 20);
+	private Recurrence rec;
+	
+	private LocalDate dueDate;
 
-	private Recurrence rec = new Recurrence(FrequencyType.ONCE, null, startDate, null, currDate);
+	private static final LocalDate start = LocalDate.of(1970, 1, 1);
 
-	@Test
-	public void currDateBeforeDate() {
-		assertEquals(rec.getNextDate(currDate), startDate);
+	@BeforeEach
+	public void startEach() {
+	    long days = ChronoUnit.DAYS.between(start, LocalDate.now().plusYears(10));
+	    LocalDate randomDate = start.plusDays(new Random().nextInt((int) days + 1));
+	    
+	    dueDate = randomDate;
+		rec = new Recurrence(FrequencyType.ONCE, dueDate, null);
 	}
-
+	
 	@Test
-	public void currDateOnDate() {
-		assertEquals(rec.getNextDate(startDate), null);
+	public void currDateAfterEndDate() {
+		assertEquals(null, rec.getNextDueDate());
 	}
-
+	
 	@Test
-	public void currDateAfterDate() {
-		assertEquals(rec.getNextDate(startDate.plusDays(1)), null);
+	public void normalusage() {
+		assertEquals(dueDate, rec.getDueDate());
 	}
 
 	@Test
 	public void stringConversion() {
-		Recurrence r = new Recurrence(FrequencyType.ONCE, null, startDate, null, currDate);
-		String textToDatabase = r.convertToString();
+		String textToDatabase = rec.convertToString();
 
 		Recurrence r2 = new Recurrence(textToDatabase);
-		assertEquals(r2.getNextDate(LocalDate.of(2023, 1, 15)), LocalDate.of(2023, 1, 20));
-		assertEquals(r2.getNextDate(LocalDate.of(2023, 1, 20)), null);
+		assertEquals(null, r2.getNextDueDate());
+		assertEquals(null, r2.getNextDueDate());
 	}
 }
