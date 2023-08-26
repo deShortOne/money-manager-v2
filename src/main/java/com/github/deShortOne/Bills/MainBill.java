@@ -49,11 +49,11 @@ public class MainBill {
 		}
 
 		System.out.println("Transactions done");
-		bi.doTransaction(20, DataObjects.getCategory(10), DataObjects.getPayment(1));
+		bi.doTransaction(LocalDate.now(), 20, DataObjects.getCategory(10), DataObjects.getPayment(1));
 		printBills(); // or getBills() to confirm that it's in the db
 
 		System.out.println("Transactions done for null last paid");
-		bills.get(5).doTransaction(50, DataObjects.getCategory(11), DataObjects.getPayment(2));
+		bills.get(5).doTransaction(LocalDate.now(), 50, DataObjects.getCategory(11), DataObjects.getPayment(2));
 		printBills(); // or getBills() to confirm that it's in the db
 
 		System.out.println("Skip a few due dates");

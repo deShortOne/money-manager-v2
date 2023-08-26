@@ -49,8 +49,8 @@ public class MainBillVisual {
 		TableColumn<BillInfo, FrequencyType> frequencyCol = new TableColumn<>("Frequency");
 		frequencyCol
 			.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getFrequency().getFrequencyType()));
-		frequencyCol.setCellFactory(c -> new BillComboBoxEditingCell<>(
-				new ArrayList<>(Arrays.asList(FrequencyType.values()))));
+		frequencyCol
+			.setCellFactory(c -> new BillComboBoxEditingCell<>(new ArrayList<>(Arrays.asList(FrequencyType.values()))));
 
 		TableColumn<BillInfo, Payment> paymentMethodCol = new TableColumn<>("Payment Method");
 		paymentMethodCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPaymentMethod()));
@@ -61,7 +61,7 @@ public class MainBillVisual {
 		payerCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllAccounts()));
 
 		TableColumn<BillInfo, LocalDate> lastPaidCol = new TableColumn<>("Last Paid");
-		lastPaidCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getDueDate()));
+		lastPaidCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getLastPaid()));
 		lastPaidCol.setCellFactory(c -> new LocalDateTableEditingCell());
 
 		TableColumn<BillInfo, Category> categoryCol = new TableColumn<>("Category");
@@ -80,6 +80,14 @@ public class MainBillVisual {
 		// ---------
 
 		Button enterInRegister = new Button("Enter in Register");
+		enterInRegister.setOnAction(new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent e) {
+				BillDoTransaction.withdrawMoney(table.getSelectionModel().getSelectedItem());
+				refreshTable();
+			}
+		});
+
 		Button newBill = new Button("New Bill");
 		newBill.setOnAction(new EventHandler<ActionEvent>() {
 			@Override

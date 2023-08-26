@@ -38,8 +38,7 @@ public class BillInfo {
 		this.paymentMethod = DataObjects.getPayment(bill.getInt("PaymentID"));
 	}
 
-	public void doTransaction(double amountPaid, Category category, Payment paymentMethod) {
-		LocalDate datePaid = frequency.getDueDate(); // date should be set to today
+	public void doTransaction(LocalDate datePaid, double amountPaid, Category category, Payment paymentMethod) {
 		boolean success = DataHandler.addTransaction(this, datePaid, amountPaid, category, paymentMethod);
 
 		if (success) {

@@ -121,15 +121,15 @@ public class DataHandler {
 	public static boolean addTransaction(BillInfo bi, LocalDate datePaid, double amountPaid, Category category,
 			Payment paymentID) {
 		String addTransaction = new StringBuilder().append("INSERT INTO transactions ")
-			.append("(BillID, DatePaid, AmountPaid, CategoryID, PaymentID)")
+			.append("(BillID, PayerAccount, PayeeAccount, DatePaid, AmountPaid, CategoryID, PaymentID)")
 			.append("VALUES")
-			.append("(%d, str_to_date('%s', '%%Y-%%m-%%d'), %f, %d, %d);")
+			.append("(%d, %d, %d, str_to_date('%s', '%%Y-%%m-%%d'), %f, %d, %d);")
 			.toString();
 
 		boolean isSuccess;
 		try {
-			SQLExecutor.changeTable(String.format(addTransaction, bi.getId(), datePaid, amountPaid, category.getId(),
-					paymentID.getId()));
+			SQLExecutor.changeTable(String.format(addTransaction, bi.getId(), bi.getPayerAccount().getId(),
+					bi.getPayeeAccount().getId(), datePaid, amountPaid, category.getId(), paymentID.getId()));
 			isSuccess = true;
 		} catch (SQLException e) {
 			e.printStackTrace();
