@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.time.LocalDate;
 
+import com.github.deShortOne.Budget.MoneyTableCell;
 import com.github.deShortOne.DataObjects.Account;
 import com.github.deShortOne.DataObjects.Category;
 import com.github.deShortOne.DataObjects.DataObjects;
@@ -11,7 +12,7 @@ import com.github.deShortOne.DataObjects.Payment;
 import com.github.deShortOne.Recurrence.FrequencyType;
 import com.github.deShortOne.Recurrence.Recurrence;
 
-public class BillInfo {
+public class BillInfo implements MoneyTableCell {
 
 	private static String stringFormat = "%5s%20s%20s%10s%20s%20s%20s%20s";
 

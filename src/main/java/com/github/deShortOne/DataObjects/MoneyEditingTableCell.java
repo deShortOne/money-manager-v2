@@ -2,13 +2,12 @@ package com.github.deShortOne.DataObjects;
 
 import java.text.NumberFormat;
 
-import com.github.deShortOne.Bills.BillInfo;
+import com.github.deShortOne.Budget.MoneyTableCell;
 
 import javafx.scene.control.cell.TextFieldTableCell;
 import javafx.util.StringConverter;
 
-// To be NOT BillInfo
-public class MoneyEditingCell extends TextFieldTableCell<BillInfo, Double> {
+public class MoneyEditingTableCell<T extends MoneyTableCell> extends TextFieldTableCell<T, Double> {
 
 	private static NumberFormat currencyFormat = NumberFormat.getCurrencyInstance();
 

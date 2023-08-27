@@ -8,7 +8,7 @@ import com.github.deShortOne.DataObjects.Account;
 import com.github.deShortOne.DataObjects.Category;
 import com.github.deShortOne.DataObjects.DataObjects;
 import com.github.deShortOne.DataObjects.LocalDateTableEditingCell;
-import com.github.deShortOne.DataObjects.MoneyEditingCell;
+import com.github.deShortOne.DataObjects.MoneyEditingTableCell;
 import com.github.deShortOne.DataObjects.Payment;
 import com.github.deShortOne.Recurrence.FrequencyType;
 
@@ -40,7 +40,7 @@ public class MainBillVisual {
 
 		TableColumn<BillInfo, Double> amountCol = new TableColumn<>("Amount");
 		amountCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getAmount()));
-		amountCol.setCellFactory(c -> new MoneyEditingCell());
+		amountCol.setCellFactory(c -> new MoneyEditingTableCell<>());
 
 		TableColumn<BillInfo, LocalDate> dueDateCol = new TableColumn<>("Due Date");
 		dueDateCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getDueDate()));

@@ -2,31 +2,56 @@ package com.github.deShortOne.Budget;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import com.github.deShortOne.SQL.SQLExecutor;
 
 public class DataHandler {
 
-	public static HashMap<Integer, Double> getCategoryToAmount(LocalDate startDate, LocalDate endDate) {
-		String getBudgetGroups = new StringBuilder().append("SELECT CategoryID, sum(AmountPaid) as TotalAmount ")
-			.append("FROM transactions ")
-			.append("WHERE DatePaid >= str_to_date('%s', '%%Y-%%m-%%d') ")
-			.append("AND DatePaid < str_to_date('%s', '%%Y-%%m-%%d') ")
-			.append("GROUP BY CategoryID;")
+	public static ArrayList<BudgetGroup> getCat() {
+		HashMap<Integer, BudgetGroup> idToBudgetGroup = new HashMap<>();
+		ArrayList<BudgetGroup> budgetGroupLis = new ArrayList<>();
+
+		String getBudgetGroups = new StringBuilder().append("SELECT ID, ")
+			.append("Name ")
+			.append("FROM budget_groups ")
+			.append("ORDER BY ID ASC ")
 			.toString();
 
-		HashMap<Integer, Double> categoryToAmount = new HashMap<>();
+		String getCategoryToBudget = new StringBuilder().append("SELECT BudgetGroupID, ")
+			.append("budget_to_categories.CategoryID, ")
+			.append("Planned, ")
+			.append("Actual ")
+			.append("FROM budget_to_categories ")
+			.append("LEFT JOIN (")
+			.append("	SELECT CategoryID,  ")
+			.append("	sum(AmountPaid) as Actual ")
+			.append("	FROM transactions ")
+			.append("	GROUP BY CategoryID ")
+			.append(") TotalAmount ")
+			.append("on budget_to_categories.CategoryID = TotalAmount.CategoryID ")
+			.toString();
+
 		try {
-			ResultSet results = SQLExecutor.getTable(String.format(getBudgetGroups, startDate, endDate));
+			ResultSet results = SQLExecutor.getTable(getBudgetGroups);
 			while (results.next()) {
-				categoryToAmount.put(results.getInt("CategoryID"), results.getDouble("TotalAmount"));
+				BudgetGroup bg = new BudgetGroup(results);
+				budgetGroupLis.add(bg);
+				idToBudgetGroup.put(bg.getId(), bg);
+			}
+			results.close();
+
+			results = SQLExecutor.getTable(getCategoryToBudget);
+			while (results.next()) {
+				BudgetGroup bg = idToBudgetGroup.get(results.getInt("BudgetGroupID"));
+				BudgetCategory bc = new BudgetCategory(results, bg);
+				bg.addCategory(bc);
 			}
 			results.close();
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
-		return categoryToAmount;
+		return budgetGroupLis;
 	}
 }

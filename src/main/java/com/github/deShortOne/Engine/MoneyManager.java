@@ -1,6 +1,7 @@
 package com.github.deShortOne.Engine;
 
 import com.github.deShortOne.Bills.MainBillVisual;
+import com.github.deShortOne.Budget.MainBudgetVisual;
 import com.github.deShortOne.DataObjects.DataObjects;
 
 import javafx.application.Application;
@@ -23,7 +24,7 @@ public class MoneyManager extends Application {
 
 		Tab home = new Tab("Home", new Label("Put something here! Anything!"));
 		Tab bills = new Tab("Bills", MainBillVisual.getVisuals());
-		Tab budget = new Tab("Budget", new Label("Budget page"));
+		Tab budget = new Tab("Budget", MainBudgetVisual.getVisuals());
 
 		tabPane.getTabs().addAll(home, bills, budget);
 

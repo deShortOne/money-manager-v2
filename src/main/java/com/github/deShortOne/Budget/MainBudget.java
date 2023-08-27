@@ -1,23 +1,19 @@
 package com.github.deShortOne.Budget;
 
-import java.time.LocalDate;
-import java.util.HashMap;
-
-import com.github.deShortOne.DataObjects.DataObjects;
+import java.util.ArrayList;
 
 public class MainBudget {
 
 	public static void main(String[] args) {
-		System.out.println(String.format("%20s%15s", "Category", "Total Amount"));
-		HashMap<Integer, Double> categoryToAmount = DataHandler.getCategoryToAmount(LocalDate.of(2023, 1, 1),
-				LocalDate.of(2024, 1, 1));
-		for (int i : categoryToAmount.keySet()) {
-			System.out
-				.println(String.format("%20s%15s", DataObjects.getCategory(i).getName(), categoryToAmount.get(i)));
-		}
+		ArrayList<BudgetGroup> lis = DataHandler.getCat();
 
-		LocalDate[] ld = BudgetPeriod.getStartEndDates(BudgetPeriod.CURRENT_MONTH, LocalDate.now());
-		System.out.println(ld[0]);
-		System.out.println(ld[1]);
+		for (BudgetGroup bg : lis) {
+			System.out.println(bg.getName());
+			for (BudgetCategory bc : bg.getCategoryList()) {
+				System.out.println(String.format(" > %s : £%.2f : £%.2f", bc.getCategory().getName(), bc.getPlanned(),
+						bc.getActual()));
+			}
+			System.out.println();
+		}
 	}
 }

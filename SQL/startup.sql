@@ -73,3 +73,21 @@ INSERT INTO transactions (BillID, PayerAccount, PayeeAccount, DatePaid, AmountPa
 (1, 1, 2, str_to_date('2023-05-12', '%Y-%m-%d'), 10, 1, 3), 
 (2, 2, 1, str_to_date('2023-05-10', '%Y-%m-%d'), 20, 1, 4), 
 (2, 2, 1, str_to_date('2023-05-17', '%Y-%m-%d'), 20, 1, 4);
+
+CREATE TABLE budget_groups (
+	ID INT AUTO_INCREMENT,
+	Name VARCHAR(50),
+	PRIMARY KEY(ID)
+);
+INSERT INTO budget_groups (Name) VALUES ('Income'), ('Committed Expenses'), ('Fun'), ('Irregular Expenses'), ('Savings & Debt'), ('Retirement');
+
+CREATE TABLE budget_to_categories (
+	BudgetGroupID INT,
+	CategoryID INT,
+	Planned DOUBLE,
+	FOREIGN KEY(BudgetGroupID) REFERENCES budget_groups(ID),
+	FOREIGN KEY(CategoryID) REFERENCES categories(ID)
+);
+INSERT INTO budget_to_categories (BudgetGroupID, CategoryID, Planned) VALUES
+(2, 3, 30),
+(2, 4, 30);
