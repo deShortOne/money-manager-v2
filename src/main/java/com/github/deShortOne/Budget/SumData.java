@@ -1,6 +1,6 @@
 package com.github.deShortOne.Budget;
 
-public class SumData {
+public class SumData implements MoneyTableCell {
 
 	private final String title;
 	private Double planned;

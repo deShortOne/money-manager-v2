@@ -2,6 +2,7 @@ package com.github.deShortOne.Budget;
 
 import java.util.ArrayList;
 
+import com.github.deShortOne.DataObjects.MoneyEditingTableCell;
 import com.github.deShortOne.DataObjects.MoneyEditingTreeTableCell;
 
 import javafx.beans.property.SimpleObjectProperty;
@@ -75,9 +76,11 @@ public class MainBudgetVisual {
 
 		TreeTableColumn<BillDataValue, Double> actual = new TreeTableColumn<>("Actual");
 		actual.setCellValueFactory(new TreeItemPropertyValueFactory<>("actual"));
+		actual.setCellFactory(c -> new MoneyEditingTreeTableCell<BillDataValue>());
 
 		TreeTableColumn<BillDataValue, Double> difference = new TreeTableColumn<>("Difference");
 		difference.setCellValueFactory(new TreeItemPropertyValueFactory<>("difference"));
+		difference.setCellFactory(c -> new MoneyEditingTreeTableCell<BillDataValue>());
 
 		mainTable.getColumns().add(bgAndCategories);
 		mainTable.getColumns().add(planned);
@@ -102,12 +105,15 @@ public class MainBudgetVisual {
 
 		TableColumn<SumData, Double> summaryPlanned = new TableColumn<>("Planned");
 		summaryPlanned.setCellValueFactory(new PropertyValueFactory<>("planned"));
-
+		summaryPlanned.setCellFactory(c -> new MoneyEditingTableCell<SumData>());
+		
 		TableColumn<SumData, Double> summaryActual = new TableColumn<>("Actual");
 		summaryActual.setCellValueFactory(new PropertyValueFactory<>("actual"));
+		summaryActual.setCellFactory(c -> new MoneyEditingTableCell<SumData>());
 
 		TableColumn<SumData, Double> summaryDifference = new TableColumn<>("Difference");
 		summaryDifference.setCellValueFactory(new PropertyValueFactory<>("difference"));
+		summaryDifference.setCellFactory(c -> new MoneyEditingTableCell<SumData>());
 
 		sumTable.getColumns().add(titleCol);
 		sumTable.getColumns().add(summaryPlanned);
