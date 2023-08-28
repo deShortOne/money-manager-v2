@@ -5,10 +5,17 @@ import java.util.ArrayList;
 import com.github.deShortOne.DataObjects.MoneyEditingTreeTableCell;
 
 import javafx.beans.property.SimpleObjectProperty;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
+import javafx.scene.control.Button;
+import javafx.scene.control.TableColumn;
+import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
 import javafx.scene.control.TreeTableView;
+import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
@@ -17,15 +24,28 @@ public class MainBudgetVisual {
 
 	private static ArrayList<BudgetGroup> budgetGroupList = DataHandler.getCat();
 
-	private static TreeTableView<BillDataValue> table;
+	private static TreeTableView<BillDataValue> mainTable;
 	private static TreeItem<BillDataValue> budgetsAndCategories = new TreeItem<>();
+
+	private static TableView<SumData> sumTable = new TableView<>();
+	private static SumData totalIncome = new SumData("Total Income:", -1, -1);
+	private static SumData totalExpense = new SumData("Total Expenses:", -1, -1);
+	private static SumData remainder = new SumData("Remainder", -1, -1);
 
 	private static VBox box = new VBox();
 
 	static {
 		Text title = new Text("Budget");
 
-		table = new TreeTableView<>();
+		Button viewTransactions = new Button("View Transactions");
+		Button addCategory = new Button("Add Category");
+		Button moveCategory = new Button("Move Category");
+		Button removeCategory = new Button("Remove Category");
+
+		HBox buttons = new HBox();
+		buttons.getChildren().addAll(viewTransactions, addCategory, moveCategory, removeCategory);
+
+		mainTable = new TreeTableView<>();
 		TreeTableColumn<BillDataValue, String> bgAndCategories = new TreeTableColumn<>("Budget groups and categories");
 		bgAndCategories.setCellValueFactory(new TreeItemPropertyValueFactory<>("tableCellValue"));
 		// i -> new SimpleObjectProperty<>(i.getValue().getValue().getPlanned()) instead
@@ -49,7 +69,8 @@ public class MainBudgetVisual {
 		planned.setOnEditCommit(event -> {
 			BudgetCategory row = (BudgetCategory) event.getRowValue().getValue();
 			row.updatePlanned(event.getNewValue());
-			table.refresh();
+			
+			refreshAllTables();
 		});
 
 		TreeTableColumn<BillDataValue, Double> actual = new TreeTableColumn<>("Actual");
@@ -58,10 +79,10 @@ public class MainBudgetVisual {
 		TreeTableColumn<BillDataValue, Double> difference = new TreeTableColumn<>("Difference");
 		difference.setCellValueFactory(new TreeItemPropertyValueFactory<>("difference"));
 
-		table.getColumns().add(bgAndCategories);
-		table.getColumns().add(planned);
-		table.getColumns().add(actual);
-		table.getColumns().add(difference);
+		mainTable.getColumns().add(bgAndCategories);
+		mainTable.getColumns().add(planned);
+		mainTable.getColumns().add(actual);
+		mainTable.getColumns().add(difference);
 
 		for (BudgetGroup bg : budgetGroupList) {
 			TreeItem<BillDataValue> budgetGroup = new TreeItem<>(bg);
@@ -71,14 +92,64 @@ public class MainBudgetVisual {
 			budgetsAndCategories.getChildren().add(budgetGroup);
 		}
 
-		table.setRoot(budgetsAndCategories);
-		table.setShowRoot(false);
-		table.setEditable(true);
+		mainTable.setRoot(budgetsAndCategories);
+		mainTable.setShowRoot(false);
+		mainTable.setEditable(true);
 
-		box.getChildren().addAll(title, table);
+		// SUMMARY
+		TableColumn<SumData, String> titleCol = new TableColumn<>("Budget groups and categories");
+		titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
+
+		TableColumn<SumData, Double> summaryPlanned = new TableColumn<>("Planned");
+		summaryPlanned.setCellValueFactory(new PropertyValueFactory<>("planned"));
+
+		TableColumn<SumData, Double> summaryActual = new TableColumn<>("Actual");
+		summaryActual.setCellValueFactory(new PropertyValueFactory<>("actual"));
+
+		TableColumn<SumData, Double> summaryDifference = new TableColumn<>("Difference");
+		summaryDifference.setCellValueFactory(new PropertyValueFactory<>("difference"));
+
+		sumTable.getColumns().add(titleCol);
+		sumTable.getColumns().add(summaryPlanned);
+		sumTable.getColumns().add(summaryActual);
+		sumTable.getColumns().add(summaryDifference);
+
+		summaryValues();
+		ObservableList<SumData> sumData = FXCollections.observableArrayList(totalIncome, totalExpense, remainder);
+		sumTable.setItems(sumData);
+
+		box.getChildren().addAll(title, buttons, mainTable, sumTable);
 	}
 
 	public static Pane getVisuals() {
 		return box;
+	}
+
+	private static void refreshAllTables() {
+		summaryValues();
+
+		mainTable.refresh();
+		sumTable.refresh();
+	}
+
+	private static void summaryValues() {
+		double plannedIncome = 0;
+		double plannedExpense = 0;
+		double actualIncome = 0;
+		double actualExpense = 0;
+
+		for (BudgetGroup bg : budgetGroupList) {
+			if (bg.getName().equals("Income")) {
+				plannedIncome += bg.getPlanned();
+				actualIncome += bg.getActual();
+			} else {
+				plannedExpense += bg.getPlanned();
+				actualExpense += bg.getActual();
+			}
+		}
+
+		totalIncome.updateValue(plannedIncome, actualIncome);
+		totalExpense.updateValue(plannedExpense, actualExpense);
+		remainder.updateValue(plannedIncome - plannedExpense, actualIncome - actualExpense);
 	}
 }
