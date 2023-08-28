@@ -145,9 +145,8 @@ public class MainBudgetVisual {
 		summaryValues();
 		ObservableList<SumData> sumData = FXCollections.observableArrayList(totalIncome, totalExpense, remainder);
 		sumTable.setItems(sumData);
-
-//		sumTable.setStyle("visibility: hidden; -fx-padding: -1em;");
-
+		sumTable.setMaxHeight(98);
+		
 		box.getChildren().addAll(title, buttons, mainTable, sumTable);
 	}
 
