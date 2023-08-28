@@ -13,6 +13,7 @@ import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TreeItem;
 import javafx.scene.control.TreeTableColumn;
+import javafx.scene.control.TreeTableRow;
 import javafx.scene.control.TreeTableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.scene.control.cell.TreeItemPropertyValueFactory;
@@ -20,6 +21,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Pane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
+import javafx.util.Callback;
 
 public class MainBudgetVisual {
 
@@ -51,6 +53,7 @@ public class MainBudgetVisual {
 		bgAndCategories.setCellValueFactory(new TreeItemPropertyValueFactory<>("tableCellValue"));
 		// i -> new SimpleObjectProperty<>(i.getValue().getValue().getPlanned()) instead
 		// of TreeItemPropertyValueFactory
+		bgAndCategories.setSortable(false);
 
 		TreeTableColumn<BillDataValue, Double> planned = new TreeTableColumn<>("Planned");
 		planned.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getValue().getPlanned()));
@@ -70,22 +73,41 @@ public class MainBudgetVisual {
 		planned.setOnEditCommit(event -> {
 			BudgetCategory row = (BudgetCategory) event.getRowValue().getValue();
 			row.updatePlanned(event.getNewValue());
-			
+
 			refreshAllTables();
 		});
+		planned.setSortable(false);
 
 		TreeTableColumn<BillDataValue, Double> actual = new TreeTableColumn<>("Actual");
 		actual.setCellValueFactory(new TreeItemPropertyValueFactory<>("actual"));
-		actual.setCellFactory(c -> new MoneyEditingTreeTableCell<BillDataValue>());
+		actual.setCellFactory(c -> new MoneyEditingTreeTableCell<>());
+		actual.setSortable(false);
 
 		TreeTableColumn<BillDataValue, Double> difference = new TreeTableColumn<>("Difference");
 		difference.setCellValueFactory(new TreeItemPropertyValueFactory<>("difference"));
-		difference.setCellFactory(c -> new MoneyEditingTreeTableCell<BillDataValue>());
+		difference.setCellFactory(c -> new MoneyEditingTreeTableCell<>());
+		difference.setSortable(false);
 
 		mainTable.getColumns().add(bgAndCategories);
 		mainTable.getColumns().add(planned);
 		mainTable.getColumns().add(actual);
 		mainTable.getColumns().add(difference);
+		mainTable.setRowFactory(new Callback<TreeTableView<BillDataValue>, TreeTableRow<BillDataValue>>() {
+			@Override
+			public TreeTableRow<BillDataValue> call(TreeTableView<BillDataValue> param) {
+				return new TreeTableRow<>() {
+					@Override
+					public void updateItem(BillDataValue item, boolean empty) {
+						super.updateItem(item, empty);
+						if (item instanceof BudgetGroup) {
+							super.setStyle("-fx-font-weight: bold;");
+						} else {
+							super.setStyle("-fx-font-weight: normal;");
+						}
+					}
+				};
+			}
+		});
 
 		for (BudgetGroup bg : budgetGroupList) {
 			TreeItem<BillDataValue> budgetGroup = new TreeItem<>(bg);
@@ -105,15 +127,15 @@ public class MainBudgetVisual {
 
 		TableColumn<SumData, Double> summaryPlanned = new TableColumn<>("Planned");
 		summaryPlanned.setCellValueFactory(new PropertyValueFactory<>("planned"));
-		summaryPlanned.setCellFactory(c -> new MoneyEditingTableCell<SumData>());
-		
+		summaryPlanned.setCellFactory(c -> new MoneyEditingTableCell<>());
+
 		TableColumn<SumData, Double> summaryActual = new TableColumn<>("Actual");
 		summaryActual.setCellValueFactory(new PropertyValueFactory<>("actual"));
-		summaryActual.setCellFactory(c -> new MoneyEditingTableCell<SumData>());
+		summaryActual.setCellFactory(c -> new MoneyEditingTableCell<>());
 
 		TableColumn<SumData, Double> summaryDifference = new TableColumn<>("Difference");
 		summaryDifference.setCellValueFactory(new PropertyValueFactory<>("difference"));
-		summaryDifference.setCellFactory(c -> new MoneyEditingTableCell<SumData>());
+		summaryDifference.setCellFactory(c -> new MoneyEditingTableCell<>());
 
 		sumTable.getColumns().add(titleCol);
 		sumTable.getColumns().add(summaryPlanned);
@@ -123,6 +145,8 @@ public class MainBudgetVisual {
 		summaryValues();
 		ObservableList<SumData> sumData = FXCollections.observableArrayList(totalIncome, totalExpense, remainder);
 		sumTable.setItems(sumData);
+
+//		sumTable.setStyle("visibility: hidden; -fx-padding: -1em;");
 
 		box.getChildren().addAll(title, buttons, mainTable, sumTable);
 	}
