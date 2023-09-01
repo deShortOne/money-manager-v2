@@ -25,7 +25,7 @@ import javafx.util.Callback;
 
 public class MainBudgetVisual {
 
-	private static ArrayList<BudgetGroup> budgetGroupList = DataHandler.getCat();
+	public static ArrayList<BudgetGroup> budgetGroupList = DataHandler.getCat();
 
 	private static TreeTableView<BillDataValue> mainTable;
 	private static TreeItem<BillDataValue> budgetsAndCategories = new TreeItem<>();
@@ -42,6 +42,10 @@ public class MainBudgetVisual {
 
 		Button viewTransactions = new Button("View Transactions");
 		Button addCategory = new Button("Add Category");
+		addCategory.setOnAction(i -> {
+			AddCategory.getVisuals();
+		});
+		
 		Button moveCategory = new Button("Move Category");
 		Button removeCategory = new Button("Remove Category");
 
