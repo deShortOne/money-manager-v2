@@ -36,13 +36,14 @@
 			<version>20-ea+9</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.testfx/testfx-core -->
+		<!-- https://mvnrepository.com/artifact/org.testfx/testfx-junit -->
 		<dependency>
-		    <groupId>org.testfx</groupId>
-		    <artifactId>testfx-core</artifactId>
-		    <version>4.0.16-alpha</version>
-		    <scope>test</scope>
+			<groupId>org.testfx</groupId>
+			<artifactId>testfx-junit</artifactId>
+			<version>4.0.15-alpha</version>
+			<scope>test</scope>
 		</dependency>
-	</dependencies>
+	 </dependencies>
 
 	<build>
 		<pluginManagement>

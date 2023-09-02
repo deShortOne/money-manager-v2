@@ -63,12 +63,15 @@ public class ChangeBill {
 		payee = new Text("Pay to: ");
 		payToAccount = BillComboBox.createComboBox(DataObjects.getAllAccounts());
 		Label accountNumber = new Label("Account number goes here");
+		payToAccount.setId("payeeId");
 
 		payer = new Text("Pay from: ");
 		payFromAccount = BillComboBox.createComboBox(DataObjects.getAllAccounts());
+		payFromAccount.setId("payerId");
 
 		paymentMethod = new Text("Payment method: ");
 		paymentMethodCombo = BillComboBox.createComboBox(DataObjects.getAllPaymentMethods());
+		paymentMethodCombo.setId("paymentMethodId");
 
 		amount = new Text("Amount: ");
 		amountField = new TextField();
@@ -95,9 +98,11 @@ public class ChangeBill {
 
 		TextFormatter<Double> textFormatter = new TextFormatter<>(converter, 0.0);
 		amountField.setTextFormatter(textFormatter);
+		amountField.setId("amountFieldId");
 
 		categoryText = new Text("Category: ");
 		categoryCombo = BillComboBox.createComboBox(DataObjects.getAllCategories());
+		categoryCombo.setId("categoryId");
 
 		nextPaymentDateText = new Text("Next payment date: ");
 		nextPaymentDate = new DatePicker(LocalDate.now());
@@ -108,9 +113,11 @@ public class ChangeBill {
 				setDisable(item.isBefore(LocalDate.now()));
 			}
 		});
+		nextPaymentDate.setId("nextPaymentId");
 
 		frequencyText = new Text("Frequency: ");
 		frequency = BillComboBox.createComboBox(new ArrayList<>(Arrays.asList(FrequencyType.values())));
+		frequency.setId("frequencyId");
 
 		GridPane gp = new GridPane();
 		gp.add(payee, 0, 0);
@@ -136,6 +143,7 @@ public class ChangeBill {
 		gp.add(frequency, 3, 2);
 
 		Button save = new Button("Save");
+		save.setId("save");
 		save.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {

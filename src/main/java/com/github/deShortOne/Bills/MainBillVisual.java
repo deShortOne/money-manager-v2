@@ -26,14 +26,14 @@ import javafx.scene.layout.VBox;
 
 public class MainBillVisual {
 
-	private static TableView<BillInfo> table;
+	private static TableView<BillInfo> table = new TableView<>();
 
 	public static Pane getVisuals() {
+		table.setId("table");
 		Label title = new Label("Upcoming bills");
 
 		// in future decide if {@code i -> new PropertyValueFactory("payeeAccount")}
 		// would be better
-		table = new TableView<>();
 		TableColumn<BillInfo, Account> payeeCol = new TableColumn<>("Payee");
 		payeeCol.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getPayeeAccount()));
 		payeeCol.setCellFactory(c -> new BillComboBoxEditingCell<>(DataObjects.getAllAccounts()));
@@ -89,6 +89,7 @@ public class MainBillVisual {
 		});
 
 		Button newBill = new Button("New Bill");
+		newBill.setId("newBill");
 		newBill.setOnAction(new EventHandler<ActionEvent>() {
 			@Override
 			public void handle(ActionEvent e) {
