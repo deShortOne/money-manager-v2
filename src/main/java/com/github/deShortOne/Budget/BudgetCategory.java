@@ -35,4 +35,8 @@ public class BudgetCategory extends BillDataValue {
 	public void updateBudgetGroup(BudgetGroup bg) {
 		this.budgetGroup = bg;
 	}
+
+	public BudgetGroup getBudgetGroup() {
+		return budgetGroup;
+	}
 }

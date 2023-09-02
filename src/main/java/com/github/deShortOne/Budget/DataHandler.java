@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import com.github.deShortOne.DataObjects.Category;
 import com.github.deShortOne.SQL.SQLExecutor;
 
 public class DataHandler {
@@ -53,5 +54,45 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 		return budgetGroupLis;
+	}
+
+	public static void addCategory(BudgetGroup bg, Category category) {
+		try {
+			String addCategoryToBudgetGroup = new StringBuilder().append("INSERT INTO budget_to_categories ")
+				.append("(BudgetGroupID, CategoryID) ")
+				.append("VALUES ")
+				.append("(%d, %d) ")
+				.toString();
+
+			SQLExecutor.changeTable(String.format(addCategoryToBudgetGroup, bg.getId(), category.getId()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void removeCategoryFromBudgetGroup(BudgetGroup bg, Category category) {
+		try {
+			String addCategoryToBudgetGroup = new StringBuilder().append("DELETE FROM budget_to_categories ")
+				.append("WHERE BudgetGroupID = %d AND CategoryID = %d")
+				.toString();
+
+			SQLExecutor.changeTable(String.format(addCategoryToBudgetGroup, bg.getId(), category.getId()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
+	public static void categoryChangeBudgetGroup(BudgetCategory bc, BudgetGroup bg, Category category) {
+		try {
+			String addCategoryToBudgetGroup = new StringBuilder().append("UPDATE budget_to_categories ")
+				.append("set BudgetGroupID = %d, CategoryID = %d ")
+				.append("WHERE ")
+				.append("BudgetGroupID = %d AND CategoryID = %d ")
+				.toString();
+
+			SQLExecutor.changeTable(String.format(addCategoryToBudgetGroup, bg.getId(), category.getId(), bc.getBudgetGroup().getId(), bc.getCategory().getId()));
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
 	}
 }

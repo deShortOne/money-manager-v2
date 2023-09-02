@@ -12,9 +12,9 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
-public class AddCategory {
+public class ChangeCategory {
 
-	private static Stage addCategoryStage = new Stage();
+	private static Stage changeCategoryStage = new Stage();
 	
 	private static Text budgetGroupName = new Text("Budget Group: ");
 	private static ComboBox<BudgetGroup> budgetGroupComboBox = BudgetComboBox
@@ -28,7 +28,7 @@ public class AddCategory {
 		Button save = new Button("Save");
 		save.setOnAction(i -> {
 			if (allNecessaryFieldsDone()) {
-				addCategoryStage.close();
+				changeCategoryStage.close();
 			}
 		});
 		
@@ -40,20 +40,31 @@ public class AddCategory {
 		gp.add(categoryComboBox, 1, 1);
 
 		VBox root = new VBox();
-		root.getChildren().addAll(gp);
+		root.getChildren().addAll(gp, save);
 		
 		Scene s = new Scene(root);
-		addCategoryStage.setScene(s);
+		changeCategoryStage.setScene(s);
 	}
 	
-	public static void getVisuals() {
+	public static void addCategory() {
 		budgetGroupComboBox.getSelectionModel().select(null);
 		categoryComboBox.getSelectionModel().select(null);
 		
-		addCategoryStage.showAndWait();
+		changeCategoryStage.showAndWait();
 		
 		if (isSuccess) {
-			
+			DataHandler.addCategory(budgetGroupComboBox.getValue(), categoryComboBox.getValue());
+		}
+	}
+
+	public static void categoryChangeBudgetGroup(BudgetCategory bc) {
+		budgetGroupComboBox.getSelectionModel().select(bc.getBudgetGroup());
+		categoryComboBox.getSelectionModel().select(bc.getCategory());
+		
+		changeCategoryStage.showAndWait();
+		
+		if (isSuccess) {
+			DataHandler.categoryChangeBudgetGroup(bc, budgetGroupComboBox.getValue(), categoryComboBox.getValue());
 		}
 	}
 	
