@@ -6,7 +6,8 @@ import java.sql.SQLException;
 import com.github.deShortOne.DataObjects.Category;
 import com.github.deShortOne.DataObjects.DataObjects;
 
-public class BudgetCategory extends BillDataValue {
+
+public class BudgetCategory extends BudgetDataValue {
 	private final int categoryID;
 	private BudgetGroup budgetGroup;
 

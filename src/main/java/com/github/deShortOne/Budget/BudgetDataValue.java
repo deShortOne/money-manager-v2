@@ -2,12 +2,13 @@ package com.github.deShortOne.Budget;
 
 import com.github.deShortOne.DataObjects.BaseDataValue;
 
-public abstract class BillDataValue implements BaseDataValue, MoneyTableCell {
+
+public abstract class BudgetDataValue implements BaseDataValue, MoneyTableCell {
 
 	private double actual;
 	private double planned;
 
-	public BillDataValue(double actual, double planned) {
+	public BudgetDataValue(double actual, double planned) {
 		this.actual = actual;
 		this.planned = planned;
 	}
@@ -29,5 +30,4 @@ public abstract class BillDataValue implements BaseDataValue, MoneyTableCell {
 	public double getDifference() {
 		return actual - planned;
 	}
-
 }

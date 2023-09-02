@@ -27,8 +27,8 @@ public class MainBudgetVisual {
 
 	public static ArrayList<BudgetGroup> budgetGroupList = DataHandler.getCat();
 
-	private static TreeTableView<BillDataValue> mainTable = new TreeTableView<>();
-	private static TreeItem<BillDataValue> budgetsAndCategories = new TreeItem<>();
+	private static TreeTableView<BudgetDataValue> mainTable = new TreeTableView<>();
+	private static TreeItem<BudgetDataValue> budgetsAndCategories = new TreeItem<>();
 
 	private static TableView<SumData> sumTable = new TableView<>();
 	private static SumData totalIncome = new SumData("Total Income:", -1, -1);
@@ -41,6 +41,12 @@ public class MainBudgetVisual {
 		Text title = new Text("Budget");
 
 		Button viewTransactions = new Button("View Transactions");
+		viewTransactions.setOnAction(i -> {
+			BudgetDataValue bdv = mainTable.getSelectionModel().getSelectedItem().getValue();
+			ArrayList<Transaction> transactions = DataHandler.getTransactions(bdv);
+			ShowTransactions.showTransactions(transactions);
+		});
+
 		Button addCategory = new Button("Add Category");
 		addCategory.setOnAction(i -> {
 			ChangeCategory.addCategory();
@@ -49,7 +55,7 @@ public class MainBudgetVisual {
 		
 		Button moveCategory = new Button("Move Category");
 		moveCategory.setOnAction(i -> {
-			BillDataValue bdv = mainTable.getSelectionModel().getSelectedItem().getValue();
+			BudgetDataValue bdv = mainTable.getSelectionModel().getSelectedItem().getValue();
 			if (bdv instanceof BudgetGroup) {
 				return;
 			}
@@ -61,7 +67,7 @@ public class MainBudgetVisual {
 
 		Button removeCategory = new Button("Remove Category");
 		removeCategory.setOnAction(i -> {
-			BillDataValue bdv = mainTable.getSelectionModel().getSelectedItem().getValue();
+			BudgetDataValue bdv = mainTable.getSelectionModel().getSelectedItem().getValue();
 			if (bdv instanceof BudgetGroup) {
 				return;
 			}
@@ -74,16 +80,16 @@ public class MainBudgetVisual {
 		HBox buttons = new HBox();
 		buttons.getChildren().addAll(viewTransactions, addCategory, moveCategory, removeCategory);
 
-		TreeTableColumn<BillDataValue, String> bgAndCategories = new TreeTableColumn<>("Budget groups and categories");
+		TreeTableColumn<BudgetDataValue, String> bgAndCategories = new TreeTableColumn<>("Budget groups and categories");
 		bgAndCategories.setCellValueFactory(new TreeItemPropertyValueFactory<>("tableCellValue"));
 		// i -> new SimpleObjectProperty<>(i.getValue().getValue().getPlanned()) instead
 		// of TreeItemPropertyValueFactory
 		bgAndCategories.setSortable(false);
 
-		TreeTableColumn<BillDataValue, Double> planned = new TreeTableColumn<>("Planned");
+		TreeTableColumn<BudgetDataValue, Double> planned = new TreeTableColumn<>("Planned");
 		planned.setCellValueFactory(i -> new SimpleObjectProperty<>(i.getValue().getValue().getPlanned()));
 		planned.setCellFactory(c -> {
-			MoneyEditingTreeTableCell<BillDataValue> cell = new MoneyEditingTreeTableCell<>() {
+			MoneyEditingTreeTableCell<BudgetDataValue> cell = new MoneyEditingTreeTableCell<>() {
 				@Override
 				public void startEdit() {
 					if (getTableRow().getItem() instanceof BudgetGroup) {
@@ -103,12 +109,12 @@ public class MainBudgetVisual {
 		});
 		planned.setSortable(false);
 
-		TreeTableColumn<BillDataValue, Double> actual = new TreeTableColumn<>("Actual");
+		TreeTableColumn<BudgetDataValue, Double> actual = new TreeTableColumn<>("Actual");
 		actual.setCellValueFactory(new TreeItemPropertyValueFactory<>("actual"));
 		actual.setCellFactory(c -> new MoneyEditingTreeTableCell<>());
 		actual.setSortable(false);
 
-		TreeTableColumn<BillDataValue, Double> difference = new TreeTableColumn<>("Difference");
+		TreeTableColumn<BudgetDataValue, Double> difference = new TreeTableColumn<>("Difference");
 		difference.setCellValueFactory(new TreeItemPropertyValueFactory<>("difference"));
 		difference.setCellFactory(c -> new MoneyEditingTreeTableCell<>());
 		difference.setSortable(false);
@@ -117,12 +123,12 @@ public class MainBudgetVisual {
 		mainTable.getColumns().add(planned);
 		mainTable.getColumns().add(actual);
 		mainTable.getColumns().add(difference);
-		mainTable.setRowFactory(new Callback<TreeTableView<BillDataValue>, TreeTableRow<BillDataValue>>() {
+		mainTable.setRowFactory(new Callback<TreeTableView<BudgetDataValue>, TreeTableRow<BudgetDataValue>>() {
 			@Override
-			public TreeTableRow<BillDataValue> call(TreeTableView<BillDataValue> param) {
+			public TreeTableRow<BudgetDataValue> call(TreeTableView<BudgetDataValue> param) {
 				return new TreeTableRow<>() {
 					@Override
-					public void updateItem(BillDataValue item, boolean empty) {
+					public void updateItem(BudgetDataValue item, boolean empty) {
 						super.updateItem(item, empty);
 						if (item instanceof BudgetGroup) {
 							super.setStyle("-fx-font-weight: bold;");
@@ -135,7 +141,7 @@ public class MainBudgetVisual {
 		});
 
 		for (BudgetGroup bg : budgetGroupList) {
-			TreeItem<BillDataValue> budgetGroup = new TreeItem<>(bg);
+			TreeItem<BudgetDataValue> budgetGroup = new TreeItem<>(bg);
 			budgetGroup.setExpanded(true);
 			for (BudgetCategory bc : bg.getCategoryList()) {
 				budgetGroup.getChildren().add(new TreeItem<>(bc));
@@ -212,7 +218,7 @@ public class MainBudgetVisual {
 		budgetGroupList = DataHandler.getCat();
 		budgetsAndCategories.getChildren().clear();
 		for (BudgetGroup bg : budgetGroupList) {
-			TreeItem<BillDataValue> budgetGroup = new TreeItem<>(bg);
+			TreeItem<BudgetDataValue> budgetGroup = new TreeItem<>(bg);
 			budgetGroup.setExpanded(true);
 			for (BudgetCategory bc : bg.getCategoryList()) {
 				budgetGroup.getChildren().add(new TreeItem<>(bc));

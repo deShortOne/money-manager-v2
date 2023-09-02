@@ -95,4 +95,35 @@ public class DataHandler {
 			e.printStackTrace();
 		}
 	}
+
+	public static ArrayList<Transaction> getTransactions(BudgetDataValue bdv) {
+		ArrayList<Transaction> transactions = new ArrayList<>();
+		try {
+			String getTransactionsQuery = new StringBuilder().append("SELECT PayerAccount, PayeeAccount, DatePaid, ")
+					.append("	AmountPaid, CategoryID ")
+					.append("FROM transactions ")
+					.append("WHERE CategoryID IN (%s) ")
+					.toString();
+			
+			String listOfIds;
+			if (bdv instanceof BudgetCategory) {
+				BudgetCategory bc = (BudgetCategory) bdv;
+				listOfIds = String.valueOf(bc.getCategory().getId());
+			} else {
+				listOfIds = "-1"; // impossible id
+				BudgetGroup bg = (BudgetGroup) bdv;
+				for (BudgetCategory bc : bg.getCategoryList()) {
+					listOfIds += "," + bc.getCategory().getId();
+				}
+			}
+			ResultSet rs = SQLExecutor.getTable(String.format(getTransactionsQuery, listOfIds));
+			while (rs.next()) {
+				transactions.add(new Transaction(rs));
+			}
+
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return transactions;
+	}
 }
